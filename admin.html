@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Grandstander:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>POPOTE EMH2 - Admin</title>
+  <style>
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --grey: #888888;
+      --grey-light: #f5f5f5;
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --orange: #f97316;
+      --purple: #8b5cf6;
+      --border: 3px solid #000000;
+      --radius-sm: 14px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius-full: 50px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Grandstander', cursive; background: var(--grey-light); min-height: 100vh; color: var(--black); font-size: 16px; }
+    
+    /* Header */
+    .header { background: var(--black); color: var(--white); padding: 20px 24px; position: sticky; top: 0; z-index: 100; }
+    .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .header-title { font-size: 24px; font-weight: 800; }
+    .header-subtitle { font-size: 12px; opacity: 0.7; }
+    .logout-btn { background: transparent; border: 2px solid var(--white); color: var(--white); padding: 10px 20px; border-radius: var(--radius-md); font-weight: 700; cursor: pointer; font-family: 'Grandstander', cursive; }
+    
+    /* Navigation Tabs */
+    .nav-tabs { background: var(--white); border-bottom: var(--border); padding: 0 24px; overflow-x: auto; white-space: nowrap; }
+    .nav-tabs-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: 8px; }
+    .nav-tab { padding: 16px 20px; font-size: 14px; font-weight: 700; color: var(--grey); cursor: pointer; border-bottom: 4px solid transparent; transition: all 0.2s; white-space: nowrap; }
+    .nav-tab:hover { color: var(--black); }
+    .nav-tab.active { color: var(--black); border-bottom-color: var(--black); }
+    
+    /* Main Content */
+    .main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .page { display: none; }
+    .page.active { display: block; }
+    
+    /* Cards */
+    .card { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 20px; }
+    .card-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 24px; text-align: center; }
+    .stat-value { font-size: 36px; font-weight: 800; color: var(--black); }
+    .stat-label { font-size: 13px; color: var(--grey); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+    .stat-card.green .stat-value { color: var(--green); }
+    .stat-card.blue .stat-value { color: var(--blue); }
+    .stat-card.orange .stat-value { color: var(--orange); }
+    .stat-card.purple .stat-value { color: var(--purple); }
+    
+    /* Buttons */
+    .btn { padding: 14px 24px; border: var(--border); border-radius: var(--radius-md); font-size: 15px; font-weight: 700; font-family: 'Grandstander', cursive; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; background: var(--white); color: var(--black); transition: all 0.2s; }
+    .btn:hover { transform: scale(1.02); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: var(--black); color: var(--white); }
+    .btn-success { background: var(--green); color: var(--white); border-color: var(--green); }
+    .btn-danger { background: var(--red); color: var(--white); border-color: var(--red); }
+    .btn-small { padding: 10px 16px; font-size: 13px; }
+    .btn-icon { padding: 10px; }
+    
+    /* Inputs */
+    .input { width: 100%; padding: 14px 18px; border: var(--border); border-radius: var(--radius-md); font-size: 15px; font-family: 'Grandstander', cursive; background: var(--white); margin-bottom: 12px; outline: none; }
+    .input:focus { box-shadow: 0 0 0 4px rgba(0,0,0,0.1); }
+    select.input { cursor: pointer; }
+    textarea.input { resize: vertical; min-height: 80px; }
+    .input-row { display: flex; gap: 12px; margin-bottom: 12px; }
+    .input-row .input { margin-bottom: 0; }
+    .input-group { margin-bottom: 16px; }
+    .input-label { font-size: 13px; font-weight: 700; color: var(--grey); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 1px; }
+    
+    /* Tables */
+    .table-container { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 14px 16px; text-align: left; border-bottom: 2px solid var(--grey-light); }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--grey); font-weight: 700; background: var(--grey-light); }
+    tr:hover { background: var(--grey-light); }
+    
+    /* Badges */
+    .badge { display: inline-block; padding: 6px 14px; border-radius: var(--radius-full); font-size: 12px; font-weight: 700; }
+    .badge-green { background: #dcfce7; color: var(--green); }
+    .badge-red { background: #fef2f2; color: var(--red); }
+    .badge-blue { background: #dbeafe; color: var(--blue); }
+    .badge-orange { background: #ffedd5; color: var(--orange); }
+    .badge-grey { background: var(--grey-light); color: var(--grey); }
+    .badge-purple { background: #f3e8ff; color: var(--purple); }
+    
+    /* User Row */
+    .user-row { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--white); border: var(--border); border-radius: var(--radius-md); margin-bottom: 12px; flex-wrap: wrap; }
+    .user-info { flex: 1; min-width: 200px; }
+    .user-name { font-weight: 700; font-size: 16px; }
+    .user-username { font-size: 13px; color: var(--grey); }
+    .user-solde { font-size: 20px; font-weight: 800; min-width: 100px; text-align: right; }
+    .user-solde.negative { color: var(--red); }
+    .user-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    
+    /* Modal */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 24px; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: var(--white); border-radius: var(--radius-lg); padding: 32px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .modal-title { font-size: 24px; font-weight: 800; margin-bottom: 20px; }
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+    .modal-actions .btn { flex: 1; justify-content: center; }
+    
+    /* Messages */
+    .message { padding: 16px 20px; border-radius: var(--radius-md); margin-bottom: 16px; font-weight: 600; }
+    .message.error { background: #fef2f2; color: var(--red); border: 2px solid var(--red); }
+    .message.success { background: #f0fdf4; color: var(--green); border: 2px solid var(--green); }
+    .message:empty { display: none; }
+    
+    /* Loading */
+    .loading { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 40px; color: var(--grey); }
+    .spinner { width: 24px; height: 24px; border: 3px solid var(--grey-light); border-top-color: var(--black); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* Login */
+    .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--black); }
+    .login-card { background: var(--white); border-radius: var(--radius-lg); padding: 40px; max-width: 400px; width: 100%; text-align: center; }
+    .login-title { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+    .login-subtitle { color: var(--grey); margin-bottom: 32px; }
+    
+    /* Item Cards */
+    .item-card { background: var(--white); border: var(--border); border-radius: var(--radius-md); padding: 20px; margin-bottom: 16px; }
+    .item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 12px; }
+    .item-title { font-weight: 700; font-size: 18px; }
+    .item-meta { font-size: 13px; color: var(--grey); margin-bottom: 12px; }
+    .item-description { font-size: 14px; color: var(--grey); margin-bottom: 12px; line-height: 1.5; }
+    .item-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    
+    /* Options list */
+    .options-list { margin: 12px 0; }
+    .option-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--grey-light); border-radius: var(--radius-sm); margin-bottom: 6px; }
+    .option-text { flex: 1; }
+    .option-votes { font-weight: 700; }
+    .option-remove { cursor: pointer; color: var(--red); }
+    
+    /* Toggle Switch */
+    .toggle-container { display: flex; align-items: center; gap: 12px; }
+    .toggle { position: relative; width: 50px; height: 28px; background: var(--grey-light); border-radius: 14px; cursor: pointer; border: 2px solid var(--grey); transition: all 0.2s; }
+    .toggle.active { background: var(--green); border-color: var(--green); }
+    .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: var(--white); border-radius: 50%; transition: all 0.2s; }
+    .toggle.active::after { left: 24px; }
+    
+    /* Search */
+    .search-bar { display: flex; gap: 12px; margin-bottom: 20px; }
+    .search-bar .input { margin-bottom: 0; flex: 1; }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-content { flex-direction: column; gap: 12px; text-align: center; }
+      .nav-tabs { padding: 0 16px; }
+      .nav-tab { padding: 12px 16px; font-size: 13px; }
+      .main { padding: 16px; }
+      .input-row { flex-direction: column; }
+      .user-row { flex-direction: column; text-align: center; }
+      .user-solde { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <!-- LOGIN PAGE -->
+  <div id="loginPage" class="login-page">
+    <div class="login-card">
+      <h1 class="login-title">🔐 Admin</h1>
+      <p class="login-subtitle">POPOTE EMH2</p>
+      <div id="loginMsg" class="message"></div>
+      <input type="text" id="loginUsername" class="input" placeholder="Nom d'utilisateur">
+      <input type="password" id="loginPassword" class="input" placeholder="Mot de passe">
+      <button class="btn btn-primary" style="width: 100%;" onclick="doLogin()">Connexion</button>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel" style="display: none;">
+    <div class="header">
+      <div class="header-content">
+        <div>
+          <div class="header-title">🛠️ Administration</div>
+          <div class="header-subtitle">POPOTE EMH2</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Déconnexion</button>
+      </div>
+    </div>
+
+    <div class="nav-tabs">
+      <div class="nav-tabs-inner">
+        <div class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</div>
+        <div class="nav-tab" onclick="showTab('users')">👥 Utilisateurs</div>
+        <div class="nav-tab" onclick="showTab('products')">📦 Produits</div>
+        <div class="nav-tab" onclick="showTab('sondages')">📊 Sondages</div>
+        <div class="nav-tab" onclick="showTab('evenements')">📅 Événements</div>
+        <div class="nav-tab" onclick="showTab('mascottes')">🐊 Mascottes</div>
+        <div class="nav-tab" onclick="showTab('teasers')">🆕 Teasers</div>
+        <div class="nav-tab" onclick="showTab('precommandes')">🛒 Précommandes</div>
+        <div class="nav-tab" onclick="showTab('transactions')">💰 Transactions</div>
+        <div class="nav-tab" onclick="showTab('recharges')">💳 Recharges</div>
+      </div>
+    </div>
+
+    <div class="main">
+      <!-- DASHBOARD -->
+      <div id="tabDashboard" class="page active">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-value" id="statUsers">-</div><div class="stat-label">Utilisateurs</div></div>
+          <div class="stat-card green"><div class="stat-value" id="statCotisants">-</div><div class="stat-label">Cotisants</div></div>
+          <div class="stat-card blue"><div class="stat-value" id="statVentes">-</div><div class="stat-label">Ventes ce mois</div></div>
+          <div class="stat-card orange"><div class="stat-value" id="statTx">-</div><div class="stat-label">Transactions</div></div>
+          <div class="stat-card purple"><div class="stat-value" id="statSoldes">-</div><div class="stat-label">Total soldes</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">🏆 Top produits du mois</div>
+          <div id="topProduits"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">⚡ Actions rapides</div>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button class="btn" onclick="showTab('users')">👥 Gérer utilisateurs</button>
+            <button class="btn" onclick="openRechargeModal()">💳 Recharger un compte</button>
+            <button class="btn" onclick="showTab('sondages')">📊 Créer un sondage</button>
+            <button class="btn" onclick="showTab('evenements')">📅 Créer un événement</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- USERS -->
+      <div id="tabUsers" class="page">
+        <div class="card">
+          <div class="card-title">
+            <span>👥 Gestion des utilisateurs</span>
+            <button class="btn btn-primary btn-small" onclick="openCreateUserModal()">+ Nouvel utilisateur</button>
+          </div>
+          <div class="search-bar">
+            <input type="text" id="searchUsers" class="input" placeholder="Rechercher un utilisateur..." oninput="filterUsers()">
+          </div>
+          <div id="usersList"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div id="tabProducts" class="page">
+        <div class="card">
+          <div class="card-title">
+            <span>📦 Gestion des produits</span>
+            <button class="btn btn-primary btn-small" onclick="openAddProductModal()">+ Nouveau produit</button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>Code</th><th>Nom</th><th>Prix</th><th>Actions</th></tr></thead>
+              <tbody id="productsTable"><tr><td colspan="4"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SONDAGES -->
+      <div id="tabSondages" class="page">
+        <div class="card">
+          <div class="card-title">
+            <span>📊 Gestion des sondages</span>
+            <button class="btn btn-primary btn-small" onclick="openCreateSondageModal()">+ Nouveau sondage</button>
+          </div>
+          <div id="sondagesList"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <!-- EVENEMENTS -->
+      <div id="tabEvenements" class="page">
+        <div class="card">
+          <div class="card-title">
+            <span>📅 Gestion des événements</span>
+            <button class="btn btn-primary btn-small" onclick="openCreateEvenementModal()">+ Nouvel événement</button>
+          </div>
+          <div id="evenementsList"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <!-- MASCOTTES -->
+      <div id="tabMascottes" class="page">
+        <div class="card">
+          <div class="card-title">
+            <span>🐊 Gestion des mascottes</span>
+            <button class="btn btn-primary btn-small" onclick="openCreateMascotteModal()">+ Nouvelle mascotte</button>
+          </div>
+          <div id="mascottesList"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <!-- TEASERS -->
+      <div id="tabTeasers" class="page">
+        <div class="card">
+          <div class="card-title">
+            <span>🆕 Produits à venir (Teasers)</span>
+            <button class="btn btn-primary btn-small" onclick="openCreateTeaserModal()">+ Nouveau teaser</button>
+          </div>
+          <div id="teasersList"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <!-- PRECOMMANDES -->
+      <div id="tabPrecommandes" class="page">
+        <div class="card">
+          <div class="card-title">
+            <span>🛒 Gestion des Précommandes</span>
+            <button class="btn btn-small" onclick="loadPrecommandes()">🔄 Actualiser</button>
+          </div>
+          <div class="stats-grid" style="margin-bottom: 24px;">
+            <div class="stat-card"><div class="stat-value" id="statTotalPreco">-</div><div class="stat-label">Total précommandes</div></div>
+            <div class="stat-card green"><div class="stat-value" id="statPrecoPaid">-</div><div class="stat-label">Payées</div></div>
+            <div class="stat-card orange"><div class="stat-value" id="statPrecoUnpaid">-</div><div class="stat-label">En attente</div></div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>Date</th><th>Produit</th><th>Client</th><th>Prix</th><th>Statut</th><th>Actions</th></tr></thead>
+              <tbody id="precommandesTable"><tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSACTIONS -->
+      <div id="tabTransactions" class="page">
+        <div class="card">
+          <div class="card-title">💰 Historique des transactions</div>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>Date</th><th>Utilisateur</th><th>Produit</th><th>Montant</th><th>Solde</th></tr></thead>
+              <tbody id="transactionsTable"><tr><td colspan="5"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECHARGES -->
+      <div id="tabRecharges" class="page">
+        <div class="card">
+          <div class="card-title">
+            <span>💳 Recharges & Paiements</span>
+            <button class="btn btn-primary btn-small" onclick="openRechargeModal()">+ Nouvelle recharge</button>
+          </div>
+          <div class="stats-grid" style="margin-bottom: 24px;">
+            <div class="stat-card"><div class="stat-value" id="statRechargesMois">-</div><div class="stat-label">Recharges ce mois</div></div>
+            <div class="stat-card green"><div class="stat-value" id="statTerminal">-</div><div class="stat-label">Terminal CB</div></div>
+            <div class="stat-card blue"><div class="stat-value" id="statEspeces">-</div><div class="stat-label">Espèces</div></div>
+            <div class="stat-card orange"><div class="stat-value" id="statLien">-</div><div class="stat-label">Lien paiement</div></div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>Date</th><th>Utilisateur</th><th>Montant</th><th>Méthode</th><th>Statut</th></tr></thead>
+              <tbody id="rechargesTable"><tr><td colspan="5"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- MODALS -->
+  <!-- Modal Recharge -->
+  <div id="modalRecharge" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 class="modal-title">💳 Recharger un compte</h2>
+      <div class="input-group">
+        <label class="input-label">Utilisateur</label>
+        <select id="rechargeUser" class="input"></select>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Montant (€)</label>
+        <input type="number" id="rechargeMontant" class="input" placeholder="10.00" step="0.01" min="0">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Méthode de paiement</label>
+        <select id="rechargeMethode" class="input">
+          <option value="TERMINAL">Terminal CB (SumUp)</option>
+          <option value="ESPECES">Espèces</option>
+          <option value="LIEN">Lien de paiement</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Notes (optionnel)</label>
+        <input type="text" id="rechargeNotes" class="input" placeholder="Notes...">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal('modalRecharge')">Annuler</button>
+        <button class="btn btn-success" onclick="doRecharge()">Recharger</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Create User -->
+  <div id="modalCreateUser" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 class="modal-title">👤 Nouvel utilisateur</h2>
+      <div class="input-group">
+        <label class="input-label">Nom d'utilisateur</label>
+        <input type="text" id="newUserUsername" class="input" placeholder="prenom.nom">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Prénom et Nom</label>
+        <input type="text" id="newUserNom" class="input" placeholder="Jean Dupont">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Mot de passe</label>
+        <input type="text" id="newUserPassword" class="input" placeholder="Mot de passe">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Solde initial (€)</label>
+        <input type="number" id="newUserSolde" class="input" placeholder="0" step="0.01" value="0">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal('modalCreateUser')">Annuler</button>
+        <button class="btn btn-success" onclick="doCreateUser()">Créer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Add Product -->
+  <div id="modalAddProduct" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 class="modal-title">📦 Nouveau produit</h2>
+      <div class="input-group">
+        <label class="input-label">Code</label>
+        <input type="text" id="productCode" class="input" placeholder="CAFE001">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Nom</label>
+        <input type="text" id="productNom" class="input" placeholder="Café">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Prix (€)</label>
+        <input type="number" id="productPrix" class="input" placeholder="0.50" step="0.01" min="0">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal('modalAddProduct')">Annuler</button>
+        <button class="btn btn-success" onclick="doAddProduct()">Ajouter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Bloquer User -->
+  <div id="modalBloquer" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 class="modal-title">🚫 Bloquer un utilisateur</h2>
+      <p style="margin-bottom: 16px; color: var(--grey);">Utilisateur : <strong id="bloquerUsername">-</strong></p>
+      <div class="input-group">
+        <label class="input-label">Durée du blocage</label>
+        <select id="bloquerDuree" class="input">
+          <option value="15">15 minutes</option>
+          <option value="30">30 minutes</option>
+          <option value="60">1 heure</option>
+          <option value="180">3 heures</option>
+          <option value="1440">1 jour</option>
+          <option value="10080">1 semaine</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Raison</label>
+        <input type="text" id="bloquerRaison" class="input" placeholder="Raison du blocage">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal('modalBloquer')">Annuler</button>
+        <button class="btn btn-danger" onclick="doBloquer()">Bloquer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Create Sondage -->
+  <div id="modalSondage" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 class="modal-title">📊 Nouveau sondage</h2>
+      <div class="input-group">
+        <label class="input-label">Titre</label>
+        <input type="text" id="sondageTitre" class="input" placeholder="Votre question...">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Description (optionnel)</label>
+        <textarea id="sondageDescription" class="input" placeholder="Description..."></textarea>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Type de vote</label>
+        <select id="sondageType" class="input">
+          <option value="unique">Choix unique</option>
+          <option value="multiple">Choix multiple</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Date de fin (optionnel)</label>
+        <input type="date" id="sondageDateFin" class="input">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Options de réponse</label>
+        <div id="sondageOptions"></div>
+        <button class="btn btn-small" onclick="addSondageOption()" style="margin-top: 8px;">+ Ajouter une option</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal('modalSondage')">Annuler</button>
+        <button class="btn btn-success" onclick="doCreateSondage()">Créer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Create Evenement -->
+  <div id="modalEvenement" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 class="modal-title">📅 Nouvel événement</h2>
+      <div class="input-group">
+        <label class="input-label">Titre</label>
+        <input type="text" id="eventTitre" class="input" placeholder="Nom de l'événement">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Description</label>
+        <textarea id="eventDescription" class="input" placeholder="Description..."></textarea>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Date et heure</label>
+        <input type="datetime-local" id="eventDate" class="input">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Lieu</label>
+        <input type="text" id="eventLieu" class="input" placeholder="Lieu de l'événement">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Inscription requise</label>
+        <select id="eventInscription" class="input">
+          <option value="false">Non</option>
+          <option value="true">Oui</option>
+        </select>
+      </div>
+      <div class="input-row">
+        <div class="input-group" style="flex: 1;">
+          <label class="input-label">Prix normal (€)</label>
+          <input type="number" id="eventPrixNormal" class="input" value="0" step="0.01" min="0">
+        </div>
+        <div class="input-group" style="flex: 1;">
+          <label class="input-label">Prix cotisant (€)</label>
+          <input type="number" id="eventPrixCotisant" class="input" value="0" step="0.01" min="0">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal('modalEvenement')">Annuler</button>
+        <button class="btn btn-success" onclick="doCreateEvenement()">Créer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Create Mascotte -->
+  <div id="modalMascotte" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 class="modal-title">🐊 Nouvelle mascotte</h2>
+      <div class="input-group">
+        <label class="input-label">Nom</label>
+        <input type="text" id="mascotteNom" class="input" placeholder="Nom de la mascotte">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Description</label>
+        <textarea id="mascotteDescription" class="input" placeholder="Description..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal('modalMascotte')">Annuler</button>
+        <button class="btn btn-success" onclick="doCreateMascotte()">Créer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Create Teaser -->
+  <div id="modalTeaser" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 class="modal-title">🆕 Nouveau teaser</h2>
+      <div class="input-group">
+        <label class="input-label">Nom du produit</label>
+        <input type="text" id="teaserNom" class="input" placeholder="Nom du produit">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Description</label>
+        <textarea id="teaserDescription" class="input" placeholder="Description..."></textarea>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Date de sortie prévue</label>
+        <input type="date" id="teaserDate" class="input">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Prix prévu (€)</label>
+        <input type="number" id="teaserPrix" class="input" value="0" step="0.01" min="0">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Précommandes possibles</label>
+        <select id="teaserPrecommande" class="input">
+          <option value="false">Non</option>
+          <option value="true">Oui</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal('modalTeaser')">Annuler</button>
+        <button class="btn btn-success" onclick="doCreateTeaser()">Créer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Modal -->
+  <div id="modalMessage" class="modal-overlay hidden">
+    <div class="modal" style="text-align: center;">
+      <div style="font-size: 60px; margin-bottom: 16px;" id="msgIcon">✅</div>
+      <h2 class="modal-title" id="msgTitle">Succès</h2>
+      <p style="color: var(--grey); margin-bottom: 24px;" id="msgText">-</p>
+      <button class="btn btn-primary" onclick="closeModal('modalMessage')">OK</button>
+    </div>
+  </div>
+  <script>
+    var currentToken = null;
+    var currentUser = null;
+    var allUsers = [];
+    var allProducts = [];
+    var allSondages = [];
+    var allEvenements = [];
+    var allMascottes = [];
+    var allTeasers = [];
+    var sondageOptionsCount = 0;
+
+    // Session
+    function saveSession() { if (currentToken && currentUser) { localStorage.setItem('popoteAdminToken', currentToken); localStorage.setItem('popoteAdminUser', JSON.stringify(currentUser)); } }
+    function loadSession() { var token = localStorage.getItem('popoteAdminToken'); var user = localStorage.getItem('popoteAdminUser'); if (token && user) { currentToken = token; currentUser = JSON.parse(user); return true; } return false; }
+    function clearSession() { localStorage.removeItem('popoteAdminToken'); localStorage.removeItem('popoteAdminUser'); currentToken = null; currentUser = null; }
+
+    // Login
+    function doLogin() {
+      var username = document.getElementById('loginUsername').value.trim().toLowerCase();
+      var password = document.getElementById('loginPassword').value.trim();
+      var msg = document.getElementById('loginMsg');
+      if (!username || !password) { msg.className = 'message error'; msg.innerText = 'Veuillez remplir tous les champs'; return; }
+      msg.className = 'message success'; msg.innerText = 'Connexion...';
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) {
+          if (result.user.role !== 'ADMIN') { msg.className = 'message error'; msg.innerText = 'Accès réservé aux administrateurs'; return; }
+          currentToken = result.token; currentUser = result.user; saveSession();
+          document.getElementById('loginPage').style.display = 'none';
+          document.getElementById('adminPanel').style.display = 'block';
+          loadDashboard();
+        } else { msg.className = 'message error'; msg.innerText = result ? result.msg : 'Erreur'; }
+      }).withFailureHandler(function() { msg.className = 'message error'; msg.innerText = 'Erreur serveur'; }).apiLogin(username, password);
+    }
+
+    function logout() { if (currentToken) { google.script.run.apiLogout(currentToken); } clearSession(); location.reload(); }
+
+    // Navigation
+    function showTab(tab) {
+      document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.getElementById('tab' + capitalize(tab)).classList.add('active');
+      event.target.classList.add('active');
+      if (tab === 'dashboard') loadDashboard();
+      else if (tab === 'users') loadUsers();
+      else if (tab === 'products') loadProducts();
+      else if (tab === 'sondages') loadSondages();
+      else if (tab === 'evenements') loadEvenements();
+      else if (tab === 'mascottes') loadMascottes();
+      else if (tab === 'teasers') loadTeasers();
+      else if (tab === 'precommandes') loadPrecommandes();
+      else if (tab === 'transactions') loadTransactions();
+      else if (tab === 'recharges') loadRecharges();
+    }
+
+    function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+    // Dashboard
+    function loadDashboard() {
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) {
+          document.getElementById('statUsers').innerText = result.nbUtilisateurs;
+          document.getElementById('statCotisants').innerText = result.nbCotisants || 0;
+          document.getElementById('statVentes').innerText = formatMontant(result.totalVentesMois);
+          document.getElementById('statTx').innerText = result.nbTransactionsMois;
+          document.getElementById('statSoldes').innerText = formatMontant(result.totalSoldes);
+          var topHtml = '';
+          if (result.topProduits && result.topProduits.length > 0) {
+            result.topProduits.forEach(function(p, i) { topHtml += '<div style="padding: 12px 0; border-bottom: 1px solid var(--grey-light); display: flex; justify-content: space-between;"><span>' + (i+1) + '. ' + p.nom + '</span><span class="badge badge-blue">' + p.count + ' ventes</span></div>'; });
+          } else { topHtml = '<p style="color: var(--grey);">Aucune vente ce mois</p>'; }
+          document.getElementById('topProduits').innerHTML = topHtml;
+        }
+      }).apiAdminGetGlobalStats(currentToken);
+    }
+
+    // Users
+    function loadUsers() {
+      document.getElementById('usersList').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { allUsers = result.data; renderUsers(); }
+      }).apiAdminGetAllUsers(currentToken);
+    }
+
+    function renderUsers() {
+      var search = document.getElementById('searchUsers').value.toLowerCase();
+      var filtered = allUsers.filter(function(u) { return u.username.toLowerCase().includes(search) || u.nom.toLowerCase().includes(search); });
+      var html = '';
+      filtered.forEach(function(u) {
+        var soldeClass = u.solde < 0 ? 'negative' : '';
+        var badges = '';
+        if (u.role === 'ADMIN') badges += '<span class="badge badge-purple">Admin</span> ';
+        if (u.cotisant) badges += '<span class="badge badge-green">Cotisant</span> ';
+        if (u.detteAutorisee) badges += '<span class="badge badge-blue">Dette OK</span> ';
+        if (u.bloque) badges += '<span class="badge badge-red">Bloqué</span> ';
+        html += '<div class="user-row">';
+        html += '<div class="user-info"><div class="user-name">' + escapeHtml(u.nom) + ' ' + badges + '</div><div class="user-username">@' + u.username + '</div></div>';
+        html += '<div class="user-solde ' + soldeClass + '">' + formatMontant(u.solde) + '</div>';
+        html += '<div class="user-actions">';
+        html += '<button class="btn btn-small btn-success" onclick="quickRecharge(\'' + u.username + '\')">💳</button>';
+        html += '<button class="btn btn-small" onclick="toggleCotisant(\'' + u.username + '\', ' + !u.cotisant + ')">' + (u.cotisant ? '❌ Cotisant' : '✅ Cotisant') + '</button>';
+        html += '<button class="btn btn-small" onclick="toggleDette(\'' + u.username + '\', ' + !u.detteAutorisee + ')">' + (u.detteAutorisee ? '❌ Dette' : '✅ Dette') + '</button>';
+        if (u.bloque) { html += '<button class="btn btn-small btn-success" onclick="debloquer(\'' + u.username + '\')">Débloquer</button>'; }
+        else { html += '<button class="btn btn-small btn-danger" onclick="openBloquerModal(\'' + u.username + '\')">Bloquer</button>'; }
+        html += '</div></div>';
+      });
+      document.getElementById('usersList').innerHTML = html || '<p style="color: var(--grey); text-align: center; padding: 20px;">Aucun utilisateur trouvé</p>';
+    }
+
+    function filterUsers() { renderUsers(); }
+
+    function quickRecharge(username) {
+      document.getElementById('rechargeUser').value = username;
+      openRechargeModal();
+      setTimeout(function() { document.getElementById('rechargeUser').value = username; }, 100);
+    }
+
+    function toggleCotisant(username, value) {
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Succès', 'Statut cotisant mis à jour'); loadUsers(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminSetCotisant(currentToken, username, value);
+    }
+
+    function toggleDette(username, value) {
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Succès', 'Autorisation dette mise à jour'); loadUsers(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminSetDette(currentToken, username, value);
+    }
+
+    function openBloquerModal(username) {
+      document.getElementById('bloquerUsername').innerText = username;
+      document.getElementById('bloquerUsername').dataset.username = username;
+      document.getElementById('modalBloquer').classList.remove('hidden');
+    }
+
+    function doBloquer() {
+      var username = document.getElementById('bloquerUsername').dataset.username;
+      var duree = parseInt(document.getElementById('bloquerDuree').value);
+      var raison = document.getElementById('bloquerRaison').value.trim() || 'Non spécifiée';
+      closeModal('modalBloquer');
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('🚫', 'Utilisateur bloqué', result.msg); loadUsers(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminBloquerUser(currentToken, username, duree, raison);
+    }
+
+    function debloquer(username) {
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Débloqué', result.msg); loadUsers(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminDebloquerUser(currentToken, username);
+    }
+
+    function openCreateUserModal() { document.getElementById('modalCreateUser').classList.remove('hidden'); }
+
+    function doCreateUser() {
+      var username = document.getElementById('newUserUsername').value.trim().toLowerCase();
+      var nom = document.getElementById('newUserNom').value.trim();
+      var password = document.getElementById('newUserPassword').value.trim();
+      var solde = parseFloat(document.getElementById('newUserSolde').value) || 0;
+      if (!username || !nom || !password) { alert('Veuillez remplir tous les champs'); return; }
+      closeModal('modalCreateUser');
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Utilisateur créé', 'Compte créé avec succès'); loadUsers(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminCreateUser(currentToken, username, nom, password, solde);
+    }
+    // Products
+    function loadProducts() {
+      document.getElementById('productsTable').innerHTML = '<tr><td colspan="4"><div class="loading"><div class="spinner"></div></div></td></tr>';
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { allProducts = result.data; renderProducts(); }
+      }).apiAdminGetAllProducts(currentToken);
+    }
+
+    function renderProducts() {
+      var html = '';
+      allProducts.forEach(function(p) {
+        html += '<tr><td><strong>' + escapeHtml(p.code) + '</strong></td><td>' + escapeHtml(p.nom) + '</td><td>' + formatMontant(p.prix) + '</td>';
+        html += '<td><button class="btn btn-small btn-danger" onclick="deleteProduct(\'' + p.code + '\')">Supprimer</button></td></tr>';
+      });
+      document.getElementById('productsTable').innerHTML = html || '<tr><td colspan="4" style="text-align: center; color: var(--grey);">Aucun produit</td></tr>';
+    }
+
+    function openAddProductModal() { document.getElementById('modalAddProduct').classList.remove('hidden'); }
+
+    function doAddProduct() {
+      var code = document.getElementById('productCode').value.trim().toUpperCase();
+      var nom = document.getElementById('productNom').value.trim();
+      var prix = parseFloat(document.getElementById('productPrix').value) || 0;
+      if (!code || !nom) { alert('Veuillez remplir tous les champs'); return; }
+      closeModal('modalAddProduct');
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Produit ajouté', 'Le produit a été ajouté'); loadProducts(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminAddProduct(currentToken, code, nom, prix);
+    }
+
+    function deleteProduct(code) {
+      if (!confirm('Supprimer ce produit ?')) return;
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Supprimé', 'Produit supprimé'); loadProducts(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminDeleteProduct(currentToken, code);
+    }
+
+    // Sondages
+    function loadSondages() {
+      document.getElementById('sondagesList').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { allSondages = result.data; renderSondages(); }
+        else { document.getElementById('sondagesList').innerHTML = '<p style="color: var(--grey);">Erreur de chargement</p>'; }
+      }).apiGetSondages(currentToken);
+    }
+
+    function renderSondages() {
+      if (!allSondages || allSondages.length === 0) { document.getElementById('sondagesList').innerHTML = '<p style="color: var(--grey); text-align: center; padding: 20px;">Aucun sondage</p>'; return; }
+      var html = '';
+      allSondages.forEach(function(s) {
+        var totalVotes = 0; s.options.forEach(function(o) { totalVotes += o.votes; });
+        html += '<div class="item-card"><div class="item-header"><div class="item-title">' + escapeHtml(s.titre) + '</div>';
+        html += '<span class="badge badge-green">Actif</span></div>';
+        if (s.description) html += '<div class="item-description">' + escapeHtml(s.description) + '</div>';
+        html += '<div class="item-meta">Type: ' + (s.type === 'multiple' ? 'Choix multiple' : 'Choix unique') + ' • ' + totalVotes + ' vote(s)</div>';
+        html += '<div class="options-list">';
+        s.options.forEach(function(o) { html += '<div class="option-item"><span class="option-text">' + escapeHtml(o.texte) + '</span><span class="option-votes badge badge-blue">' + o.votes + '</span></div>'; });
+        html += '</div><div class="item-actions"><button class="btn btn-small btn-danger" onclick="closeSondage(\'' + s.id + '\')">Clôturer</button></div></div>';
+      });
+      document.getElementById('sondagesList').innerHTML = html;
+    }
+
+    function openCreateSondageModal() {
+      sondageOptionsCount = 0;
+      document.getElementById('sondageOptions').innerHTML = '';
+      addSondageOption(); addSondageOption();
+      document.getElementById('modalSondage').classList.remove('hidden');
+    }
+
+    function addSondageOption() {
+      sondageOptionsCount++;
+      var div = document.createElement('div');
+      div.className = 'option-item';
+      div.innerHTML = '<input type="text" class="input" style="margin: 0; flex: 1;" placeholder="Option ' + sondageOptionsCount + '" id="sondageOpt' + sondageOptionsCount + '"><span class="option-remove" onclick="this.parentElement.remove()">✕</span>';
+      document.getElementById('sondageOptions').appendChild(div);
+    }
+
+    function doCreateSondage() {
+      var titre = document.getElementById('sondageTitre').value.trim();
+      var description = document.getElementById('sondageDescription').value.trim();
+      var type = document.getElementById('sondageType').value;
+      var dateFin = document.getElementById('sondageDateFin').value;
+      var options = [];
+      document.querySelectorAll('#sondageOptions input').forEach(function(input) { if (input.value.trim()) options.push(input.value.trim()); });
+      if (!titre) { alert('Veuillez entrer un titre'); return; }
+      if (options.length < 2) { alert('Veuillez ajouter au moins 2 options'); return; }
+      closeModal('modalSondage');
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Sondage créé', 'Le sondage a été créé'); loadSondages(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminCreateSondage(currentToken, titre, description, type, options, dateFin);
+    }
+
+    function closeSondage(id) {
+      if (!confirm('Clôturer ce sondage ?')) return;
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Clôturé', 'Sondage clôturé'); loadSondages(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminCloseSondage(currentToken, id);
+    }
+
+    // Evenements
+    function loadEvenements() {
+      document.getElementById('evenementsList').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { allEvenements = result.data; renderEvenements(); }
+        else { document.getElementById('evenementsList').innerHTML = '<p style="color: var(--grey);">Erreur de chargement</p>'; }
+      }).apiGetEvenements(currentToken);
+    }
+
+    function renderEvenements() {
+      if (!allEvenements || allEvenements.length === 0) { document.getElementById('evenementsList').innerHTML = '<p style="color: var(--grey); text-align: center; padding: 20px;">Aucun événement</p>'; return; }
+      var html = '';
+      allEvenements.forEach(function(e) {
+        var dateEvt = new Date(e.dateEvent);
+        html += '<div class="item-card"><div class="item-header"><div class="item-title">' + escapeHtml(e.titre) + '</div>';
+        html += '<span class="badge ' + (e.isPast ? 'badge-grey' : 'badge-green') + '">' + (e.isPast ? 'Passé' : 'À venir') + '</span></div>';
+        if (e.description) html += '<div class="item-description">' + escapeHtml(e.description) + '</div>';
+        html += '<div class="item-meta">📅 ' + dateEvt.toLocaleDateString('fr-FR') + ' ' + dateEvt.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+        if (e.lieu) html += ' • 📍 ' + escapeHtml(e.lieu);
+        html += ' • 👥 ' + e.nbInscrits + ' inscrit(s)</div>';
+        html += '<div class="item-meta">💰 Normal: ' + formatMontant(e.prixNormal) + ' | Cotisant: ' + formatMontant(e.prixCotisant) + '</div>';
+        html += '<div class="item-actions"><button class="btn btn-small btn-danger" onclick="deleteEvenement(\'' + e.id + '\')">Supprimer</button></div></div>';
+      });
+      document.getElementById('evenementsList').innerHTML = html;
+    }
+
+    function openCreateEvenementModal() { document.getElementById('modalEvenement').classList.remove('hidden'); }
+
+    function doCreateEvenement() {
+      var titre = document.getElementById('eventTitre').value.trim();
+      var description = document.getElementById('eventDescription').value.trim();
+      var dateEvent = document.getElementById('eventDate').value;
+      var lieu = document.getElementById('eventLieu').value.trim();
+      var inscriptionRequise = document.getElementById('eventInscription').value === 'true';
+      var prixNormal = parseFloat(document.getElementById('eventPrixNormal').value) || 0;
+      var prixCotisant = parseFloat(document.getElementById('eventPrixCotisant').value) || 0;
+      if (!titre || !dateEvent) { alert('Veuillez remplir le titre et la date'); return; }
+      closeModal('modalEvenement');
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Événement créé', 'L\'événement a été créé'); loadEvenements(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminCreateEvenement(currentToken, titre, description, dateEvent, lieu, inscriptionRequise, prixNormal, prixCotisant);
+    }
+
+    function deleteEvenement(id) {
+      if (!confirm('Supprimer cet événement ?')) return;
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Supprimé', 'Événement supprimé'); loadEvenements(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminDeleteEvenement(currentToken, id);
+    }
+
+    // Mascottes
+    function loadMascottes() {
+      document.getElementById('mascottesList').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { allMascottes = result.data; renderMascottes(); }
+        else { document.getElementById('mascottesList').innerHTML = '<p style="color: var(--grey);">Erreur de chargement</p>'; }
+      }).apiGetMascottes(currentToken);
+    }
+
+    function renderMascottes() {
+      if (!allMascottes || allMascottes.length === 0) { document.getElementById('mascottesList').innerHTML = '<p style="color: var(--grey); text-align: center; padding: 20px;">Aucune mascotte</p>'; return; }
+      var html = '';
+      allMascottes.forEach(function(m) {
+        html += '<div class="item-card"><div class="item-header"><div class="item-title">🐊 ' + escapeHtml(m.nom) + '</div>';
+        html += '<span class="badge ' + (m.disponible ? 'badge-green' : 'badge-orange') + '">' + (m.disponible ? 'Disponible' : 'Réservée') + '</span></div>';
+        if (m.description) html += '<div class="item-description">' + escapeHtml(m.description) + '</div>';
+        if (m.reservationActuelle) { html += '<div class="item-meta">Réservée par: ' + escapeHtml(m.reservationActuelle.username) + ' jusqu\'au ' + new Date(m.reservationActuelle.dateFin).toLocaleDateString('fr-FR') + '</div>'; }
+        html += '<div class="item-meta">' + m.reservations.length + ' réservation(s) totale(s)</div></div>';
+      });
+      document.getElementById('mascottesList').innerHTML = html;
+    }
+
+    function openCreateMascotteModal() { document.getElementById('modalMascotte').classList.remove('hidden'); }
+
+    function doCreateMascotte() {
+      var nom = document.getElementById('mascotteNom').value.trim();
+      var description = document.getElementById('mascotteDescription').value.trim();
+      if (!nom) { alert('Veuillez entrer un nom'); return; }
+      closeModal('modalMascotte');
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Mascotte créée', 'La mascotte a été ajoutée'); loadMascottes(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminCreateMascotte(currentToken, nom, description);
+    }
+    // Teasers
+    function loadTeasers() {
+      document.getElementById('teasersList').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { allTeasers = result.data; renderTeasers(); }
+        else { document.getElementById('teasersList').innerHTML = '<p style="color: var(--grey);">Erreur de chargement</p>'; }
+      }).apiGetTeasers(currentToken);
+    }
+
+    function renderTeasers() {
+      if (!allTeasers || allTeasers.length === 0) { document.getElementById('teasersList').innerHTML = '<p style="color: var(--grey); text-align: center; padding: 20px;">Aucun teaser</p>'; return; }
+      var html = '';
+      allTeasers.forEach(function(t) {
+        html += '<div class="item-card"><div class="item-header"><div class="item-title">🆕 ' + escapeHtml(t.nom) + '</div>';
+        html += '<span class="badge ' + (t.precommandePossible ? 'badge-green' : 'badge-grey') + '">' + (t.precommandePossible ? 'Précommande ouverte' : 'Pas de précommande') + '</span></div>';
+        if (t.description) html += '<div class="item-description">' + escapeHtml(t.description) + '</div>';
+        html += '<div class="item-meta">';
+        if (t.dateSortie) html += '📅 Sortie: ' + new Date(t.dateSortie).toLocaleDateString('fr-FR') + ' • ';
+        html += '💰 Prix: ' + formatMontant(t.prix) + ' • 📦 ' + t.nbPrecommandes + ' précommande(s)</div>';
+        html += '<div class="item-actions"><button class="btn btn-small btn-danger" onclick="deleteTeaser(\'' + t.id + '\')">Supprimer</button></div></div>';
+      });
+      document.getElementById('teasersList').innerHTML = html;
+    }
+
+    function openCreateTeaserModal() { document.getElementById('modalTeaser').classList.remove('hidden'); }
+
+    function doCreateTeaser() {
+      var nom = document.getElementById('teaserNom').value.trim();
+      var description = document.getElementById('teaserDescription').value.trim();
+      var dateSortie = document.getElementById('teaserDate').value;
+      var prix = parseFloat(document.getElementById('teaserPrix').value) || 0;
+      var precommandePossible = document.getElementById('teaserPrecommande').value === 'true';
+      if (!nom) { alert('Veuillez entrer un nom'); return; }
+      closeModal('modalTeaser');
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Teaser créé', 'Le teaser a été ajouté'); loadTeasers(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminCreateTeaser(currentToken, nom, description, dateSortie, precommandePossible, prix);
+    }
+
+    function deleteTeaser(id) {
+      if (!confirm('Supprimer ce teaser ?')) return;
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Supprimé', 'Teaser supprimé'); loadTeasers(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminDeleteTeaser(currentToken, id);
+    }
+
+    // Precommandes
+    var allPrecommandes = [];
+    
+    function loadPrecommandes() {
+      document.getElementById('precommandesTable').innerHTML = '<tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>';
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { 
+          allPrecommandes = result.data; 
+          renderPrecommandes(); 
+        }
+        else { document.getElementById('precommandesTable').innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--grey);">Erreur de chargement</td></tr>'; }
+      }).apiAdminGetAllPrecommandes(currentToken);
+    }
+
+    function renderPrecommandes() {
+      var total = allPrecommandes.length;
+      var paid = allPrecommandes.filter(function(p) { return p.paid; }).length;
+      var unpaid = total - paid;
+      
+      document.getElementById('statTotalPreco').innerText = total;
+      document.getElementById('statPrecoPaid').innerText = paid;
+      document.getElementById('statPrecoUnpaid').innerText = unpaid;
+      
+      if (total === 0) { 
+        document.getElementById('precommandesTable').innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--grey); padding: 20px;">Aucune précommande</td></tr>'; 
+        return; 
+      }
+      
+      var html = '';
+      allPrecommandes.forEach(function(p) {
+        var date = p.date ? new Date(p.date) : null;
+        var dateStr = date ? date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}) : '-';
+        var statusBadge = p.paid ? '<span class="badge badge-green">✓ Payé</span>' : '<span class="badge badge-orange">En attente</span>';
+        
+        html += '<tr>';
+        html += '<td>' + dateStr + '</td>';
+        html += '<td>' + escapeHtml(p.teaserNom) + '</td>';
+        html += '<td><strong>' + escapeHtml(p.nom) + '</strong><br><span style="font-size: 12px; color: var(--grey);">@' + escapeHtml(p.username) + '</span></td>';
+        html += '<td>' + formatMontant(p.teaserPrix) + '</td>';
+        html += '<td>' + statusBadge + '</td>';
+        html += '<td>';
+        if (p.paid) {
+          html += '<button class="btn btn-small btn-danger" onclick="markPrecommandePaid(\'' + p.id + '\', false)">Annuler paiement</button>';
+        } else {
+          html += '<button class="btn btn-small btn-success" onclick="markPrecommandePaid(\'' + p.id + '\', true)">✓ Marquer payé</button>';
+        }
+        html += '</td></tr>';
+      });
+      document.getElementById('precommandesTable').innerHTML = html;
+    }
+
+    function markPrecommandePaid(id, paid) {
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { 
+          showMessage('✅', 'Mis à jour', result.msg); 
+          loadPrecommandes(); 
+        }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminMarkPrecommandePaid(currentToken, id, paid);
+    }
+
+    // Transactions
+    function loadTransactions() {
+      document.getElementById('transactionsTable').innerHTML = '<tr><td colspan="5"><div class="loading"><div class="spinner"></div></div></td></tr>';
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) {
+          var html = '';
+          result.data.forEach(function(tx) {
+            var date = new Date(tx.date);
+            var montantClass = tx.montant < 0 ? '' : 'style="color: var(--green);"';
+            html += '<tr><td>' + date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}) + '</td>';
+            html += '<td>' + escapeHtml(tx.nom) + ' <small style="color: var(--grey);">@' + tx.username + '</small></td>';
+            html += '<td>' + escapeHtml(tx.nomproduit) + '</td>';
+            html += '<td ' + montantClass + '>' + formatMontant(tx.montant) + '</td>';
+            html += '<td>' + formatMontant(tx.nouveausolde) + '</td></tr>';
+          });
+          document.getElementById('transactionsTable').innerHTML = html || '<tr><td colspan="5" style="text-align: center; color: var(--grey);">Aucune transaction</td></tr>';
+        }
+      }).apiAdminGetAllTransactions(currentToken, 100);
+    }
+
+    // Recharges
+    function loadRecharges() {
+      document.getElementById('rechargesTable').innerHTML = '<tr><td colspan="5"><div class="loading"><div class="spinner"></div></div></td></tr>';
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) {
+          document.getElementById('statRechargesMois').innerText = formatMontant(result.stats.totalMois);
+          document.getElementById('statTerminal').innerText = formatMontant(result.stats.totalTerminal);
+          document.getElementById('statEspeces').innerText = formatMontant(result.stats.totalEspeces);
+          document.getElementById('statLien').innerText = formatMontant(result.stats.totalLien);
+        }
+      }).apiAdminGetSumupStats(currentToken);
+
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) {
+          var html = '';
+          result.data.forEach(function(r) {
+            var date = new Date(r.date);
+            var methodeBadge = r.methode === 'TERMINAL' ? 'badge-blue' : (r.methode === 'ESPECES' ? 'badge-green' : 'badge-orange');
+            html += '<tr><td>' + date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}) + '</td>';
+            html += '<td>' + escapeHtml(r.username) + '</td>';
+            html += '<td style="color: var(--green); font-weight: 700;">+' + formatMontant(r.montant) + '</td>';
+            html += '<td><span class="badge ' + methodeBadge + '">' + r.methode + '</span></td>';
+            html += '<td><span class="badge badge-green">OK</span></td></tr>';
+          });
+          document.getElementById('rechargesTable').innerHTML = html || '<tr><td colspan="5" style="text-align: center; color: var(--grey);">Aucune recharge</td></tr>';
+        }
+      }).apiAdminGetSumupTransactions(currentToken, 100);
+    }
+
+    function openRechargeModal() {
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) {
+          var select = document.getElementById('rechargeUser');
+          select.innerHTML = '<option value="">Sélectionner un utilisateur...</option>';
+          result.data.sort(function(a, b) { return a.nom.localeCompare(b.nom); });
+          result.data.forEach(function(u) {
+            var opt = document.createElement('option');
+            opt.value = u.username;
+            opt.innerText = u.nom + ' (@' + u.username + ') - ' + formatMontant(u.solde);
+            select.appendChild(opt);
+          });
+        }
+      }).apiAdminGetAllUsers(currentToken);
+      document.getElementById('modalRecharge').classList.remove('hidden');
+    }
+
+    function doRecharge() {
+      var username = document.getElementById('rechargeUser').value;
+      var montant = parseFloat(document.getElementById('rechargeMontant').value);
+      var methode = document.getElementById('rechargeMethode').value;
+      var notes = document.getElementById('rechargeNotes').value.trim();
+      if (!username) { alert('Veuillez sélectionner un utilisateur'); return; }
+      if (!montant || montant <= 0) { alert('Veuillez entrer un montant valide'); return; }
+      closeModal('modalRecharge');
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showMessage('✅', 'Recharge effectuée', 'Nouveau solde: ' + formatMontant(result.nouveauSolde)); loadUsers(); loadRecharges(); }
+        else { showMessage('❌', 'Erreur', result ? result.msg : 'Erreur'); }
+      }).apiAdminRechargeWithMethod(currentToken, username, montant, methode, notes);
+    }
+
+    // Utils
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    function showMessage(icon, title, text) {
+      document.getElementById('msgIcon').innerText = icon;
+      document.getElementById('msgTitle').innerText = title;
+      document.getElementById('msgText').innerText = text;
+      document.getElementById('modalMessage').classList.remove('hidden');
+    }
+    function formatMontant(n) { return parseFloat(n || 0).toFixed(2).replace('.', ',') + ' €'; }
+    function escapeHtml(text) { var div = document.createElement('div'); div.innerText = text || ''; return div.innerHTML; }
+
+    // Init
+    window.onload = function() {
+      if (loadSession()) {
+        google.script.run.withSuccessHandler(function(result) {
+          if (result && result.ok && result.user.role === 'ADMIN') {
+            currentUser = result.user; saveSession();
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            loadDashboard();
+          } else { clearSession(); }
+        }).withFailureHandler(function() { clearSession(); }).apiGetUser(currentToken);
+      }
+    };
+
+    document.addEventListener('keypress', function(e) { if (e.key === 'Enter' && document.getElementById('loginPage').style.display !== 'none') { doLogin(); } });
+  </script>
+</body>
+</html>

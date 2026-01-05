@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="POPOTE">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Grandstander:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>POPOTE EMH2</title>
+  <style>
+    :root { --black: #000; --white: #fff; --grey: #888; --grey-light: #f5f5f5; --green: #22c55e; --red: #ef4444; --blue: #3b82f6; --orange: #f97316; --purple: #8b5cf6; --pink: #ec4899; --cyan: #06b6d4; --border: 3px solid #000; --radius-sm: 14px; --radius-md: 18px; --radius-lg: 24px; --radius-full: 50px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Grandstander', cursive; background: var(--grey-light); min-height: 100vh; color: var(--black); font-size: 16px; overflow-x: hidden; -webkit-text-size-adjust: 100%; }
+    input, select, textarea { font-size: 16px !important; touch-action: manipulation; }
+    @supports (-webkit-touch-callout: none) { input:focus, select:focus, textarea:focus { font-size: 16px !important; } }
+    .page { display: none; min-height: 100vh; }
+    .page.active { display: block; }
+    .page-content { max-width: 600px; margin: 0 auto; padding: 20px 16px 120px; }
+    .page-center { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px 16px; }
+    
+    @media (max-width: 480px) {
+      .page-content { padding: 16px 12px 120px; }
+      .page-center { padding: 16px 12px; }
+      .card { padding: 20px 16px; }
+      .btn { padding: 16px 20px; }
+      .input { padding: 16px 18px; }
+    }
+    
+    .logo { font-size: 80px; margin-bottom: 8px; }
+    .title-xl { font-size: 42px; font-weight: 800; letter-spacing: -1px; }
+    .subtitle { color: var(--grey); font-size: 14px; margin-bottom: 32px; letter-spacing: 2px; }
+    .page-title { font-size: 28px; font-weight: 800; margin-bottom: 24px; text-align: center; }
+    .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--grey); margin: 32px 0 16px; font-weight: 700; }
+    .greeting { font-size: 20px; font-weight: 600; color: var(--grey); }
+    .username-display { font-size: 32px; font-weight: 800; margin-bottom: 24px; }
+    
+    .input { width: 100%; padding: 18px 22px; border: var(--border); border-radius: var(--radius-md); font-size: 16px; font-family: 'Grandstander', cursive; margin-bottom: 16px; background: var(--white); outline: none; transition: all 0.2s; -webkit-appearance: none; appearance: none; touch-action: manipulation; }
+    .input:focus { box-shadow: 0 0 0 4px rgba(0,0,0,0.1); font-size: 16px; }
+    select.input { cursor: pointer; }
+    .btn { width: 100%; padding: 18px 24px; border: var(--border); border-radius: var(--radius-md); font-size: 17px; font-weight: 700; font-family: 'Grandstander', cursive; cursor: pointer; background: var(--white); color: var(--black); margin-bottom: 12px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .btn:hover { transform: scale(1.02); }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-primary { background: var(--black); color: var(--white); }
+    .btn-success { background: var(--green); color: var(--white); border-color: var(--green); }
+    .btn-danger { background: var(--red); color: var(--white); border-color: var(--red); }
+    .btn-small { width: auto; padding: 12px 20px; font-size: 14px; }
+    .btn-icon { font-size: 20px; }
+    
+    .message { padding: 16px 20px; border-radius: var(--radius-md); margin-bottom: 20px; font-weight: 600; text-align: center; }
+    .message.error { background: #fef2f2; color: var(--red); border: 2px solid var(--red); }
+    .message.success { background: #f0fdf4; color: var(--green); border: 2px solid var(--green); }
+    .message:empty { display: none; }
+    .login-link { text-align: center; margin-top: 24px; color: var(--grey); }
+    .login-link a { color: var(--black); font-weight: 700; text-decoration: none; }
+    
+    .card { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 16px; }
+    .solde-card { text-align: center; padding: 32px 24px; }
+    .solde-label { font-size: 14px; color: var(--grey); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+    .solde-montant { font-size: 48px; font-weight: 800; letter-spacing: -2px; }
+    .solde-montant.negative { color: var(--red); }
+    .badge { display: inline-block; padding: 8px 16px; border-radius: var(--radius-full); font-size: 13px; font-weight: 700; margin-top: 16px; }
+    .badge.active { background: #dcfce7; color: var(--green); }
+    .badge.low { background: #fef3c7; color: #d97706; }
+    .badge.dette { background: #fef2f2; color: var(--red); }
+    .badge-cotisant { background: #dbeafe; color: var(--blue); }
+    .badge-small { padding: 6px 12px; font-size: 12px; margin-left: 8px; }
+    
+    .stats-row { display: flex; gap: 12px; margin-top: 24px; }
+    .stat-card { flex: 1; background: var(--white); border: var(--border); border-radius: var(--radius-md); padding: 20px; text-align: center; }
+    .stat-value { font-size: 28px; font-weight: 800; }
+    .stat-label { font-size: 12px; color: var(--grey); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    
+    /* Products */
+    .products-header { background: var(--black); color: var(--white); margin: 0 -24px; padding: 40px 24px 24px; text-align: center; position: relative; }
+    .products-title { font-size: 28px; font-weight: 800; }
+    .products-subtitle { font-size: 14px; opacity: 0.7; margin-top: 4px; }
+    .products-back { position: absolute; left: 16px; top: 16px; background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .category-tabs { display: flex; gap: 8px; padding: 16px 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .cat-tab { padding: 12px 20px; background: var(--white); border: var(--border); border-radius: var(--radius-full); font-size: 14px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: all 0.2s; }
+    .cat-tab.active { background: var(--black); color: var(--white); }
+    .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 8px 0 100px; }
+    .product-card { background: var(--white); border: var(--border); border-radius: var(--radius-md); padding: 16px; text-align: center; transition: all 0.2s; }
+    .product-card.in-cart { background: #f0fdf4; border-color: var(--green); }
+    .product-img { font-size: 40px; margin-bottom: 8px; }
+    .product-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; line-height: 1.3; }
+    .product-price { font-size: 18px; font-weight: 800; color: var(--green); margin-bottom: 12px; }
+    .product-controls { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .qty-btn { width: 36px; height: 36px; border: var(--border); border-radius: 50%; background: var(--white); font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .qty-btn:active { transform: scale(0.95); }
+    .qty-display { font-size: 18px; font-weight: 800; min-width: 30px; text-align: center; }
+    
+    .cart-float { position: fixed; bottom: 90px; left: 24px; right: 24px; max-width: 552px; margin: 0 auto; background: var(--black); color: var(--white); border-radius: var(--radius-lg); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 50; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+    .cart-float.hidden { display: none; }
+    .cart-info { font-size: 14px; opacity: 0.8; }
+    .cart-total { font-size: 24px; font-weight: 800; }
+    .cart-btn { background: var(--white); color: var(--black); border: none; padding: 14px 24px; border-radius: var(--radius-md); font-size: 16px; font-weight: 800; cursor: pointer; font-family: 'Grandstander', cursive; }
+    
+    /* Scanner */
+    .scanner-container { background: var(--black); border-radius: var(--radius-lg); overflow: hidden; margin: 24px 0; }
+    #qr-reader { width: 100%; }
+    #qr-reader video { width: 100% !important; border-radius: var(--radius-lg); }
+    .scanner-hint { text-align: center; color: var(--grey); font-size: 14px; margin-bottom: 24px; }
+    
+    /* Historique */
+    .historique-list { margin-top: 16px; }
+    .historique-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: var(--white); border: var(--border); border-radius: var(--radius-md); margin-bottom: 12px; }
+    .historique-product { font-weight: 700; font-size: 16px; }
+    .historique-date { font-size: 13px; color: var(--grey); margin-top: 4px; }
+    .historique-montant { font-size: 18px; font-weight: 800; }
+    .historique-montant.debit { color: var(--red); }
+    .historique-montant.credit { color: var(--green); }
+    .historique-empty { text-align: center; padding: 40px; color: var(--grey); }
+    
+    .back-btn { background: none; border: none; font-size: 16px; font-weight: 700; color: var(--black); cursor: pointer; padding: 0; margin-bottom: 20px; font-family: 'Grandstander', cursive; }
+    
+    .navbar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: var(--border); display: flex; justify-content: space-around; padding: 12px 0 20px; z-index: 100; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: var(--grey); cursor: pointer; padding: 8px 12px; transition: all 0.2s; }
+    .nav-item.active { color: var(--black); }
+    .nav-icon { font-size: 24px; }
+    
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 24px; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: var(--white); border-radius: var(--radius-lg); padding: 32px; max-width: 400px; width: 100%; text-align: center; }
+    .modal-icon { font-size: 64px; margin-bottom: 16px; }
+    .modal-title { font-size: 24px; font-weight: 800; margin-bottom: 12px; }
+    .modal-message { color: var(--grey); font-size: 15px; line-height: 1.5; white-space: pre-line; margin-bottom: 24px; }
+    
+    .loading { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 40px; color: var(--grey); }
+    .spinner { width: 24px; height: 24px; border: 3px solid var(--grey-light); border-top-color: var(--black); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Recharge */
+    .username-box { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 24px; text-align: center; margin-bottom: 24px; }
+    .username-box-label { font-size: 13px; color: var(--grey); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+    .username-box-value { font-size: 28px; font-weight: 800; font-family: monospace; letter-spacing: 2px; }
+    .recharge-method { display: flex; align-items: center; gap: 16px; background: var(--white); border: var(--border); border-radius: var(--radius-md); padding: 20px; margin-bottom: 12px; text-decoration: none; color: inherit; }
+    .recharge-method-icon { font-size: 32px; }
+    .recharge-method-title { font-weight: 700; font-size: 16px; }
+    .recharge-method-desc { font-size: 13px; color: var(--grey); margin-top: 2px; }
+    .recharge-info { background: #fef3c7; border: 2px solid #d97706; border-radius: var(--radius-md); padding: 20px; }
+    .recharge-info-title { font-weight: 700; color: #d97706; margin-bottom: 8px; }
+    .recharge-info-text { font-size: 14px; color: #92400e; line-height: 1.5; }
+    
+    /* Blocage */
+    .blocage-page { background: linear-gradient(135deg, #1a1a1a 0%, #000 100%); }
+    .blocage-icon { font-size: 80px; margin-bottom: 24px; }
+    .blocage-title { font-size: 32px; font-weight: 800; color: var(--white); margin-bottom: 12px; }
+    .blocage-message { color: var(--grey); font-size: 16px; margin-bottom: 32px; }
+    .blocage-countdown { background: rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 24px 40px; margin-bottom: 24px; }
+    .countdown-label { font-size: 12px; color: var(--grey); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+    .countdown-value { font-size: 48px; font-weight: 800; color: var(--red); font-family: monospace; }
+    .blocage-raison { background: rgba(239,68,68,0.2); border: 2px solid var(--red); border-radius: var(--radius-md); padding: 20px; margin-bottom: 32px; max-width: 300px; }
+    .blocage-raison-label { font-size: 12px; color: var(--red); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+    .blocage-raison-text { color: var(--white); font-weight: 600; }
+    .btn-blocage { background: var(--white); color: var(--black); max-width: 300px; }
+    
+    /* Sondages */
+    .sondage-card { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
+    .sondage-titre { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+    .sondage-description { font-size: 14px; color: var(--grey); margin-bottom: 12px; line-height: 1.4; }
+    .sondage-type { font-size: 12px; color: var(--blue); margin-bottom: 16px; font-weight: 600; }
+    .sondage-option { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--grey-light); border-radius: var(--radius-md); margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+    .sondage-option:hover { background: #e5e5e5; }
+    .sondage-option.selected { background: #dbeafe; border: 2px solid var(--blue); }
+    .sondage-option-check { width: 24px; height: 24px; border: 2px solid var(--grey); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--blue); }
+    .sondage-option.selected .sondage-option-check { background: var(--blue); border-color: var(--blue); color: var(--white); }
+    .sondage-option-text { flex: 1; font-weight: 600; }
+    .sondage-option-votes { font-size: 13px; color: var(--grey); }
+    .sondage-progress { height: 6px; background: var(--grey-light); border-radius: 3px; margin-bottom: 12px; overflow: hidden; }
+    .sondage-progress-bar { height: 100%; background: var(--blue); border-radius: 3px; transition: width 0.3s; }
+    .sondage-fin { font-size: 12px; color: var(--grey); margin-top: 12px; text-align: right; }
+    
+    /* Events */
+    .event-card { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; position: relative; overflow: hidden; }
+    .event-card.past { opacity: 0.6; }
+    .event-date-badge { position: absolute; top: 0; right: 0; background: var(--black); color: var(--white); padding: 8px 16px; border-radius: 0 0 0 var(--radius-md); font-size: 13px; font-weight: 700; }
+    .event-titre { font-size: 18px; font-weight: 800; margin-bottom: 8px; padding-right: 80px; }
+    .event-description { font-size: 14px; color: var(--grey); margin-bottom: 12px; line-height: 1.4; }
+    .event-meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; color: var(--grey); margin-bottom: 12px; }
+    .event-meta-item { display: flex; align-items: center; gap: 4px; }
+    .event-prix { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .event-prix-item { padding: 8px 14px; background: var(--grey-light); border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; }
+    .event-prix-item.user { background: #dcfce7; color: var(--green); }
+    .event-actions { display: flex; gap: 8px; }
+    
+    /* Mascottes */
+    .mascotte-card { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; text-align: center; }
+    .mascotte-emoji { font-size: 60px; margin-bottom: 12px; }
+    .mascotte-nom { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    .mascotte-description { font-size: 14px; color: var(--grey); margin-bottom: 12px; line-height: 1.4; }
+    .mascotte-status { display: inline-block; padding: 8px 16px; border-radius: var(--radius-full); font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+    .mascotte-status.disponible { background: #dcfce7; color: var(--green); }
+    .mascotte-status.indisponible { background: #fef3c7; color: #d97706; }
+    .mascotte-reservation-info { font-size: 13px; color: var(--grey); margin-bottom: 12px; }
+    
+    /* Teasers */
+    .teaser-card { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; text-align: center; position: relative; }
+    .teaser-badge { position: absolute; top: 12px; right: 12px; background: var(--green); color: var(--white); padding: 6px 12px; border-radius: var(--radius-full); font-size: 11px; font-weight: 700; }
+    .teaser-emoji { font-size: 50px; margin-bottom: 12px; }
+    .teaser-nom { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+    .teaser-description { font-size: 14px; color: var(--grey); margin-bottom: 12px; line-height: 1.4; }
+    .teaser-meta { margin-bottom: 12px; }
+    .teaser-date { font-size: 13px; color: var(--grey); margin-bottom: 4px; }
+    .teaser-prix { font-size: 20px; font-weight: 800; color: var(--green); }
+    .teaser-precommandes { font-size: 12px; color: var(--blue); margin-bottom: 12px; font-weight: 600; }
+    
+    /* Idées */
+    .idees-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .idee-card { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
+    .idee-titre { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .idee-description { font-size: 14px; color: var(--grey); margin-bottom: 12px; line-height: 1.5; }
+    .idee-meta { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--grey); }
+    .idee-actions { display: flex; gap: 16px; }
+    .idee-action { cursor: pointer; transition: all 0.2s; }
+    .idee-action:hover { transform: scale(1.1); }
+    .idee-action.liked { color: var(--red); }
+    .idee-delete { color: var(--red); cursor: pointer; margin-left: 12px; }
+    
+    /* Goodies */
+    .goodie-card { display: flex; align-items: center; gap: 16px; background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 12px; }
+    .goodie-img { font-size: 40px; }
+    .goodie-info { flex: 1; }
+    .goodie-name { font-weight: 700; font-size: 16px; }
+    .goodie-price { font-size: 18px; font-weight: 800; color: var(--green); }
+    .goodie-stock { font-size: 12px; color: var(--grey); }
+    .goodie-btn { width: auto !important; padding: 12px 20px !important; }
+    .admin-select { width: 100%; padding: 14px; border: var(--border); border-radius: var(--radius-md); font-size: 15px; font-family: 'Grandstander', cursive; margin-bottom: 16px; }
+    .date-inputs { display: flex; gap: 12px; margin-bottom: 16px; }
+    .date-inputs .input { flex: 1; margin: 0; }
+    /* Calendar */
+    .calendar-container { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 24px; }
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .calendar-title { font-size: 18px; font-weight: 800; }
+    .calendar-nav { display: flex; gap: 8px; }
+    .calendar-nav-btn { width: 36px; height: 36px; border: var(--border); border-radius: 50%; background: var(--white); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .calendar-nav-btn:hover { background: var(--grey-light); }
+    .calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; }
+    .calendar-weekday { text-align: center; font-size: 11px; font-weight: 700; color: var(--grey); text-transform: uppercase; padding: 8px 0; }
+    .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .calendar-day { min-height: 60px; padding: 4px; display: flex; flex-direction: column; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; position: relative; background: var(--grey-light); overflow: hidden; }
+    .calendar-day:hover { background: #e5e5e5; }
+    .calendar-day.empty { background: transparent; cursor: default; min-height: auto; }
+    .calendar-day.today { background: var(--black); color: var(--white); }
+    .calendar-day-number { font-weight: 800; font-size: 14px; margin-bottom: 2px; }
+    .calendar-day-events { flex: 1; overflow: hidden; }
+    .calendar-day-event { font-size: 9px; padding: 2px 4px; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white; font-weight: 600; }
+    .calendar-day.today .calendar-day-event { background: rgba(255,255,255,0.3) !important; }
+    .calendar-legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--grey-light); }
+    .calendar-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--grey); }
+    .calendar-legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+    
+    /* Mascotte colors */
+    .mascotte-color-1 { background: var(--blue); }
+    .mascotte-color-2 { background: var(--green); }
+    .mascotte-color-3 { background: var(--orange); }
+    .mascotte-color-4 { background: var(--purple); }
+    .mascotte-color-5 { background: var(--pink); }
+    .mascotte-color-6 { background: var(--cyan); }
+    
+    .view-toggle { display: flex; gap: 8px; margin-bottom: 20px; }
+    .view-toggle-btn { flex: 1; padding: 12px; border: var(--border); border-radius: var(--radius-md); background: var(--white); font-size: 14px; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.2s; font-family: 'Grandstander', cursive; }
+    .view-toggle-btn.active { background: var(--black); color: var(--white); }
+    
+    /* Profile */
+    .profile-header { text-align: center; padding: 30px 20px; background: var(--white); border: var(--border); border-radius: var(--radius-lg); margin-bottom: 20px; }
+    .profile-avatar { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--black); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 50px; background: var(--grey-light); overflow: hidden; cursor: pointer; transition: all 0.2s; }
+    .profile-avatar:hover { transform: scale(1.05); }
+    .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-name { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+    .profile-username { font-size: 14px; color: var(--grey); }
+    .profile-section { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
+    .profile-section-title { font-size: 14px; font-weight: 700; color: var(--grey); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+    .profile-field { margin-bottom: 16px; }
+    .profile-field:last-child { margin-bottom: 0; }
+    .profile-field-label { font-size: 12px; color: var(--grey); margin-bottom: 4px; }
+    .profile-field-value { font-size: 16px; font-weight: 600; }
+    
+    /* Badges */
+    .badges-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .badge-item { background: var(--grey-light); border-radius: var(--radius-md); padding: 16px 12px; text-align: center; transition: all 0.2s; }
+    .badge-item.earned { background: #fef3c7; }
+    .badge-item.locked { opacity: 0.5; }
+    .badge-emoji { font-size: 32px; margin-bottom: 8px; }
+    .badge-name { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+    .badge-progress { font-size: 10px; color: var(--grey); }
+    .badge-progress-bar { height: 4px; background: var(--grey-light); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+    .badge-progress-fill { height: 100%; background: var(--green); border-radius: 2px; }
+    .badge-item.earned .badge-progress-bar { background: #fde68a; }
+    .badge-item.earned .badge-progress-fill { background: #f59e0b; }
+    
+    /* Reservation form in calendar */
+    .calendar-reservation-form { background: var(--grey-light); border-radius: var(--radius-md); padding: 16px; margin-top: 16px; }
+    .calendar-reservation-form select { width: 100%; padding: 12px; border: var(--border); border-radius: var(--radius-md); font-family: 'Grandstander', cursive; font-size: 14px; margin-bottom: 12px; }
+    .selected-dates { font-size: 14px; color: var(--grey); margin-bottom: 12px; text-align: center; }
+    .selected-dates strong { color: var(--black); }
+  </style>
+</head>
+<body>
+  <!-- PAGE LOGIN -->
+  <div id="pageLogin" class="page active">
+    <div class="page-content page-center">
+      <div class="logo">☕</div>
+      <h1 class="title-xl">Popote</h1>
+      <p class="subtitle">TEAM EMH2</p>
+      <div id="loginMsg" class="message"></div>
+      <div style="width: 100%; max-width: 400px;">
+        <input type="text" id="loginUsername" class="input" placeholder="Nom d'utilisateur" autocomplete="username">
+        <input type="password" id="loginPassword" class="input" placeholder="Mot de passe" autocomplete="current-password">
+        <button id="loginBtn" class="btn btn-primary" onclick="doLogin()">Connexion</button>
+      </div>
+      <p class="login-link">Pas de compte ? <a href="#" onclick="showPage('pageRegister'); return false;">S'inscrire</a></p>
+    </div>
+  </div>
+
+  <!-- PAGE REGISTER -->
+  <div id="pageRegister" class="page">
+    <div class="page-content page-center">
+      <div class="logo">✨</div>
+      <h1 class="title-xl">Inscription</h1>
+      <p class="subtitle">TEAM EMH2</p>
+      <div id="registerMsg" class="message"></div>
+      <div style="width: 100%; max-width: 400px;">
+        <input type="text" id="registerUsername" class="input" placeholder="Nom d'utilisateur" autocomplete="username">
+        <input type="text" id="registerNom" class="input" placeholder="Prénom et Nom">
+        <input type="password" id="registerPassword" class="input" placeholder="Mot de passe (min. 6 caractères)" autocomplete="new-password">
+        <button id="registerBtn" class="btn btn-primary" onclick="doRegister()">Créer mon compte</button>
+      </div>
+      <p class="login-link">Déjà un compte ? <a href="#" onclick="showPage('pageLogin'); return false;">Connexion</a></p>
+    </div>
+  </div>
+
+  <!-- PAGE COMPTE -->
+  <div id="pageCompte" class="page">
+    <div class="page-content">
+      <div style="padding-top: 20px;">
+        <h1 class="greeting">Bonjour</h1>
+        <p class="username-display" id="userName">-</p>
+      </div>
+      <div class="card solde-card">
+        <p class="solde-label">Solde actuel</p>
+        <p class="solde-montant" id="solde">0,00 €</p>
+        <div>
+          <span class="badge active" id="badge">✓ Carte active</span>
+          <span class="badge badge-cotisant badge-small" id="badgeCotisant" style="display: none;">✓ Cotisant</span>
+        </div>
+        <p id="detteInfo" style="display: none; font-size: 12px; color: var(--grey); margin-top: 8px;">💳 Dette autorisée</p>
+      </div>
+      <button class="btn btn-primary" onclick="showPage('pageScanner')"><span class="btn-icon">📷</span>Scanner un produit</button>
+      <button class="btn" onclick="loadProduits()"><span class="btn-icon">🛒</span>Voir tous les produits</button>
+      <p class="section-title">Mon compte</p>
+      <button class="btn" onclick="showPage('pageRecharge')"><span class="btn-icon">💳</span>Recharger mon compte</button>
+      <button class="btn" onclick="loadHistorique()"><span class="btn-icon">📜</span>Mes transactions</button>
+      <p class="section-title">Communauté</p>
+      <button class="btn" onclick="loadSondages()"><span class="btn-icon">📊</span>Sondages</button>
+      <button class="btn" onclick="loadEvenements()"><span class="btn-icon">📅</span>Événements</button>
+      <button class="btn" onclick="loadMascottes()"><span class="btn-icon">🐊</span>Réserver une mascotte</button>
+      <button class="btn" onclick="loadIdees()"><span class="btn-icon">💡</span>Boîte à idées</button>
+      <p class="section-title">Boutique</p>
+      <button class="btn" onclick="loadTeasers()"><span class="btn-icon">🆕</span>Bientôt disponible</button>
+      <button class="btn" onclick="loadGoodies()"><span class="btn-icon">🎁</span>Goodies EMH2</button>
+      <div class="stats-row">
+        <div class="stat-card"><p class="stat-value" id="nbAchats">-</p><p class="stat-label">Achats ce mois</p></div>
+        <div class="stat-card"><p class="stat-value" id="totalDepense">-</p><p class="stat-label">Dépensés</p></div>
+      </div>
+      <button class="btn" style="margin-top: 35px;" onclick="logout()"><span class="btn-icon">🚪</span>Déconnexion</button>
+    </div>
+  </div>
+
+  <!-- PAGE PROFIL -->
+  <div id="pageProfil" class="page">
+    <div class="page-content">
+      <button class="back-btn" onclick="showPage('pageCompte')">← Retour</button>
+      <h1 class="page-title">Mon Profil</h1>
+      
+      <div class="profile-header">
+        <div class="profile-avatar" id="profileAvatar" onclick="changeAvatar()">👤</div>
+        <p class="profile-name" id="profileName">-</p>
+        <p class="profile-username" id="profileUsername">@-</p>
+        <div id="profileCotisantBadge" style="margin-top: 12px; display: none;">
+          <span class="badge badge-cotisant">✓ Cotisant EMH2</span>
+        </div>
+        <div id="profileNonCotisantBadge" style="margin-top: 12px; display: none;">
+          <span class="badge low">✗ Non cotisant</span>
+        </div>
+      </div>
+      
+      <div class="profile-section">
+        <p class="profile-section-title">Informations</p>
+        <div class="profile-field">
+          <p class="profile-field-label">Identifiant</p>
+          <p class="profile-field-value" id="profileId">-</p>
+        </div>
+        <div class="profile-field">
+          <p class="profile-field-label">Statut</p>
+          <p class="profile-field-value" id="profileStatus">-</p>
+        </div>
+        <div class="profile-field">
+          <p class="profile-field-label">Solde</p>
+          <p class="profile-field-value" id="profileSolde">-</p>
+        </div>
+      </div>
+      
+      <div class="profile-section">
+        <p class="profile-section-title">🏆 Mes Badges</p>
+        <div class="badges-grid" id="badgesGrid"></div>
+      </div>
+      
+      <div class="profile-section">
+        <p class="profile-section-title">Changer le mot de passe</p>
+        <input type="password" id="oldPassword" class="input" placeholder="Ancien mot de passe">
+        <input type="password" id="newPassword" class="input" placeholder="Nouveau mot de passe">
+        <input type="password" id="confirmPassword" class="input" placeholder="Confirmer le nouveau mot de passe">
+        <button class="btn btn-primary" onclick="changePassword()">Modifier le mot de passe</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE PRODUITS -->
+  <div id="pageProduits" class="page">
+    <div class="page-content" style="padding-top: 0;">
+      <div class="products-header">
+        <button class="products-back" onclick="showPage('pageCompte')">←</button>
+        <h1 class="products-title">Nos Produits</h1>
+        <p class="products-subtitle">Sélectionnez vos articles</p>
+      </div>
+      <div id="categoryTabs" class="category-tabs"></div>
+      <div id="productsGrid" class="products-grid"></div>
+    </div>
+    <div id="cartFloat" class="cart-float hidden">
+      <div><p class="cart-info" id="cartCount">0 article</p><p class="cart-total" id="cartTotal">0,00 €</p></div>
+      <button class="cart-btn" onclick="validerPanier()">Valider →</button>
+    </div>
+  </div>
+
+  <!-- PAGE SCANNER (sans saisie manuelle) -->
+  <div id="pageScanner" class="page">
+    <div class="page-content">
+      <button class="back-btn" onclick="showPage('pageCompte')">← Retour</button>
+      <h1 class="page-title">Scanner</h1>
+      <div class="scanner-container"><div id="qr-reader"></div></div>
+      <p class="scanner-hint">Placez le QR code du produit dans le cadre</p>
+      <div style="background: #dbeafe; border-radius: var(--radius-md); padding: 16px; text-align: center;">
+        <p style="font-size: 14px; color: var(--blue);">💡 Pas de QR code ? Utilisez la page "Voir tous les produits" pour sélectionner vos articles.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE HISTORIQUE -->
+  <div id="pageHistorique" class="page">
+    <div class="page-content">
+      <button class="back-btn" onclick="showPage('pageCompte')">← Retour</button>
+      <h1 class="page-title">Mes transactions</h1>
+      <div id="historiqueList" class="historique-list"><div class="loading"><div class="spinner"></div><span>Chargement...</span></div></div>
+    </div>
+  </div>
+
+  <!-- PAGE SONDAGES -->
+  <div id="pageSondages" class="page">
+    <div class="page-content">
+      <button class="back-btn" onclick="showPage('pageCompte')">← Retour</button>
+      <h1 class="page-title">📊 Sondages</h1>
+      <p style="text-align: center; color: var(--grey); margin-bottom: 24px; font-size: 15px;">Donnez votre avis sur les décisions de l'association !</p>
+      <div id="sondagesList"><div class="loading"><div class="spinner"></div><span>Chargement...</span></div></div>
+    </div>
+  </div>
+  <!-- PAGE EVENEMENTS avec calendrier affichant les titres -->
+  <div id="pageEvenements" class="page">
+    <div class="page-content">
+      <button class="back-btn" onclick="showPage('pageCompte')">← Retour</button>
+      <h1 class="page-title">📅 Événements</h1>
+      
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <div class="calendar-title" id="eventsCalendarTitle">Décembre 2024</div>
+          <div class="calendar-nav">
+            <button class="calendar-nav-btn" onclick="changeEventsMonth(-1)">←</button>
+            <button class="calendar-nav-btn" onclick="changeEventsMonth(1)">→</button>
+          </div>
+        </div>
+        <div class="calendar-weekdays">
+          <div class="calendar-weekday">Lun</div>
+          <div class="calendar-weekday">Mar</div>
+          <div class="calendar-weekday">Mer</div>
+          <div class="calendar-weekday">Jeu</div>
+          <div class="calendar-weekday">Ven</div>
+          <div class="calendar-weekday">Sam</div>
+          <div class="calendar-weekday">Dim</div>
+        </div>
+        <div class="calendar-days" id="eventsCalendarDays"></div>
+      </div>
+      
+      <p class="section-title">Détails des événements</p>
+      <div id="evenementsList"><div class="loading"><div class="spinner"></div><span>Chargement...</span></div></div>
+    </div>
+  </div>
+
+  <!-- PAGE MASCOTTES avec calendrier et réservation intégrée -->
+  <div id="pageMascottes" class="page">
+    <div class="page-content">
+      <button class="back-btn" onclick="showPage('pageCompte')">← Retour</button>
+      <h1 class="page-title">🐊 Nos Mascottes</h1>
+      <p style="text-align: center; color: var(--grey); margin-bottom: 20px; font-size: 15px;">Sélectionnez vos dates sur le calendrier pour réserver une mascotte !</p>
+      
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <div class="calendar-title" id="mascottesCalendarTitle">Décembre 2024</div>
+          <div class="calendar-nav">
+            <button class="calendar-nav-btn" onclick="changeMascottesMonth(-1)">←</button>
+            <button class="calendar-nav-btn" onclick="changeMascottesMonth(1)">→</button>
+          </div>
+        </div>
+        <div class="calendar-weekdays">
+          <div class="calendar-weekday">Lun</div>
+          <div class="calendar-weekday">Mar</div>
+          <div class="calendar-weekday">Mer</div>
+          <div class="calendar-weekday">Jeu</div>
+          <div class="calendar-weekday">Ven</div>
+          <div class="calendar-weekday">Sam</div>
+          <div class="calendar-weekday">Dim</div>
+        </div>
+        <div class="calendar-days" id="mascottesCalendarDays"></div>
+        <div class="calendar-legend" id="mascottesLegend"></div>
+        
+        <!-- Formulaire de réservation intégré -->
+        <div class="calendar-reservation-form" id="mascotteReservationForm" style="display: none;">
+          <p class="selected-dates" id="selectedDatesText">Sélectionnez une date de début</p>
+          <select id="mascotteSelect" onchange="checkMascotteAvailability()">
+            <option value="">-- Choisir une mascotte --</option>
+          </select>
+          <div id="mascotteAvailabilityMsg" style="font-size: 13px; margin-bottom: 12px;"></div>
+          <button class="btn btn-primary btn-small" id="confirmReservationBtn" onclick="confirmMascotteReservation()" style="display: none;">Confirmer la réservation</button>
+          <button class="btn btn-small" onclick="resetMascotteSelection()">Annuler</button>
+        </div>
+      </div>
+      
+      <p class="section-title">Mes réservations</p>
+      <div id="myMascotteReservations"></div>
+      
+      <p class="section-title">Toutes les mascottes</p>
+      <div id="mascottesList"><div class="loading"><div class="spinner"></div><span>Chargement...</span></div></div>
+    </div>
+  </div>
+
+  <!-- PAGE TEASERS -->
+  <div id="pageTeasers" class="page">
+    <div class="page-content">
+      <button class="back-btn" onclick="showPage('pageCompte')">← Retour</button>
+      <h1 class="page-title">🆕 Bientôt disponible</h1>
+      <p style="text-align: center; color: var(--grey); margin-bottom: 24px; font-size: 15px;">Découvrez les nouveaux produits à venir et pré-commandez !</p>
+      <div id="teasersList"><div class="loading"><div class="spinner"></div><span>Chargement...</span></div></div>
+    </div>
+  </div>
+
+  <!-- PAGE IDEES -->
+  <div id="pageIdees" class="page">
+    <div class="page-content">
+      <button class="back-btn" onclick="showPage('pageCompte')">← Retour</button>
+      <div class="idees-header">
+        <h1 class="page-title" style="margin-bottom: 0;">Boîte à idées</h1>
+        <button class="btn btn-primary btn-small" onclick="showNewIdeeModal()" style="width: auto; margin: 0;">+ Idée</button>
+      </div>
+      <div id="ideesList"><div class="loading"><div class="spinner"></div><span>Chargement...</span></div></div>
+    </div>
+  </div>
+
+  <!-- PAGE GOODIES -->
+  <div id="pageGoodies" class="page">
+    <div class="page-content">
+      <button class="back-btn" onclick="showPage('pageCompte')">← Retour</button>
+      <h1 class="page-title">Goodies EMH2</h1>
+      <p style="text-align: center; color: var(--grey); margin-bottom: 16px; font-size: 15px;">Commandez vos goodies aux couleurs de TEAM EMH2 !</p>
+      <div style="background: #dbeafe; border-radius: var(--radius-md); padding: 14px; margin-bottom: 20px;">
+        <p style="font-size: 13px; color: var(--blue); line-height: 1.5; text-align: center;">💡 Passez commande ici, puis récupérez votre article auprès du responsable choisi.</p>
+      </div>
+      <div id="goodiesList"><div class="loading"><div class="spinner"></div><span>Chargement...</span></div></div>
+    </div>
+  </div>
+
+  <!-- PAGE RECHARGE -->
+  <div id="pageRecharge" class="page">
+    <div class="page-content">
+      <button class="back-btn" onclick="showPage('pageCompte')">← Retour</button>
+      <h1 class="page-title">Recharger</h1>
+      <div class="username-box">
+        <p class="username-box-label">Votre identifiant</p>
+        <p class="username-box-value" id="rechargeUsername">-</p>
+      </div>
+      <p class="section-title">Méthodes de paiement</p>
+      <div class="recharge-method"><div class="recharge-method-icon">💵</div><div class="recharge-method-info"><p class="recharge-method-title">Espèces</p><p class="recharge-method-desc">Payez directement à un responsable</p></div></div>
+      <div class="recharge-method"><div class="recharge-method-icon">💳</div><div class="recharge-method-info"><p class="recharge-method-title">Carte bancaire</p><p class="recharge-method-desc">Via le terminal SumUp</p></div></div>
+      <a href="https://pay.sumup.com/b2c/QRNA6C6I" target="_blank" style="text-decoration: none;">
+        <div class="recharge-method" style="background: #f0fdf4; border: 3px solid var(--green);">
+          <div class="recharge-method-icon">🔗</div>
+          <div class="recharge-method-info">
+            <p class="recharge-method-title" style="color: var(--green);">Payer en ligne →</p>
+            <p class="recharge-method-desc">Cliquez ici pour payer par carte en ligne</p>
+          </div>
+        </div>
+      </a>
+      <div class="recharge-info" style="margin-top: 24px;">
+        <p class="recharge-info-title">💡 Comment ça marche ?</p>
+        <p class="recharge-info-text">1. Payez en ligne via le lien ci-dessus ou rendez-vous auprès d'un responsable EMH2<br><br>2. Donnez votre identifiant (affiché en haut) lors du paiement<br><br>3. Votre compte sera crédité dans les plus brefs délais !</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE BLOCAGE -->
+  <div id="pageBlocage" class="page blocage-page">
+    <div class="page-content page-center" style="padding-bottom: 20px;">
+      <div class="blocage-icon">🚫</div>
+      <h1 class="blocage-title">Compte bloqué</h1>
+      <p class="blocage-message">Votre compte est temporairement suspendu.</p>
+      <div class="blocage-countdown"><p class="countdown-label">Temps restant</p><p class="countdown-value" id="blocageCountdown">--:--:--</p></div>
+      <div class="blocage-raison"><p class="blocage-raison-label">Raison</p><p class="blocage-raison-text" id="blocageRaison">-</p></div>
+      <button class="btn btn-blocage" onclick="logout()"><span class="btn-icon">🚪</span>Déconnexion</button>
+    </div>
+  </div>
+  <!-- MODALS -->
+  <div id="modalAchat" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-icon" id="modalIcon">✅</div>
+      <h2 class="modal-title" id="modalTitle">Achat effectué !</h2>
+      <p class="modal-message" id="modalMessage">Votre achat a bien été enregistré.</p>
+      <button class="btn btn-primary" onclick="closeModal()">OK</button>
+    </div>
+  </div>
+
+  <div id="modalIdee" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 class="modal-title">💡 Nouvelle idée</h2>
+      <input type="text" id="ideeTitre" class="input" placeholder="Titre de votre idée">
+      <textarea id="ideeDescription" class="input" style="height: 120px; resize: none;" placeholder="Décrivez votre idée..."></textarea>
+      <button class="btn btn-primary" onclick="submitIdee()">Soumettre</button>
+      <button class="btn" onclick="closeIdeeModal()">Annuler</button>
+    </div>
+  </div>
+
+  <div id="modalGoodie" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 class="modal-title">🎁 Commander</h2>
+      <p class="modal-message" id="goodieModalInfo">-</p>
+      <input type="hidden" id="selectedGoodieCode">
+      <p style="font-size: 13px; color: var(--grey); margin-bottom: 8px; text-align: left;">Choisissez le responsable auprès de qui vous récupérerez votre commande :</p>
+      <select id="adminSelect" class="admin-select"><option value="">Choisir un responsable...</option></select>
+      <div style="background: #fef3c7; border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; text-align: left;">
+        <p style="font-size: 13px; color: #92400e; line-height: 1.5;">⚠️ Le montant sera débité immédiatement de votre solde. Contactez ensuite le responsable choisi pour récupérer votre article.</p>
+      </div>
+      <button class="btn btn-primary" onclick="confirmerCommandeGoodie()">Confirmer la commande</button>
+      <button class="btn" onclick="closeGoodieModal()">Annuler</button>
+    </div>
+  </div>
+
+  <div id="modalAvatar" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 class="modal-title">👤 Choisir un avatar</h2>
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px;">
+        <div class="avatar-option" onclick="selectAvatar('👤')">👤</div>
+        <div class="avatar-option" onclick="selectAvatar('😀')">😀</div>
+        <div class="avatar-option" onclick="selectAvatar('😎')">😎</div>
+        <div class="avatar-option" onclick="selectAvatar('🤓')">🤓</div>
+        <div class="avatar-option" onclick="selectAvatar('🥳')">🥳</div>
+        <div class="avatar-option" onclick="selectAvatar('😊')">😊</div>
+        <div class="avatar-option" onclick="selectAvatar('🐊')">🐊</div>
+        <div class="avatar-option" onclick="selectAvatar('🦁')">🦁</div>
+        <div class="avatar-option" onclick="selectAvatar('🐱')">🐱</div>
+        <div class="avatar-option" onclick="selectAvatar('🐶')">🐶</div>
+        <div class="avatar-option" onclick="selectAvatar('☕')">☕</div>
+        <div class="avatar-option" onclick="selectAvatar('🍺')">🍺</div>
+        <div class="avatar-option" onclick="selectAvatar('⭐')">⭐</div>
+        <div class="avatar-option" onclick="selectAvatar('🎉')">🎉</div>
+        <div class="avatar-option" onclick="selectAvatar('💪')">💪</div>
+      </div>
+      <style>.avatar-option { font-size: 32px; padding: 12px; background: var(--grey-light); border-radius: var(--radius-md); cursor: pointer; text-align: center; transition: all 0.2s; } .avatar-option:hover { transform: scale(1.1); background: #e5e5e5; }</style>
+      <button class="btn" onclick="closeAvatarModal()">Annuler</button>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <div id="navbar" class="navbar" style="display: none;">
+    <div class="nav-item active" onclick="showPage('pageCompte')" data-page="pageCompte"><span class="nav-icon">🏠</span><span>Accueil</span></div>
+    <div class="nav-item" onclick="loadProduits()" data-page="pageProduits"><span class="nav-icon">🛒</span><span>Produits</span></div>
+    <div class="nav-item" onclick="loadEvenements()" data-page="pageEvenements"><span class="nav-icon">📅</span><span>Événements</span></div>
+    <div class="nav-item" onclick="loadMascottes()" data-page="pageMascottes"><span class="nav-icon">🐊</span><span>Mascottes</span></div>
+    <div class="nav-item" onclick="showProfil()" data-page="pageProfil"><span class="nav-icon">👤</span><span>Profil</span></div>
+  </div>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script>
+    var currentToken = null;
+    var currentUser = null;
+    var allProducts = [];
+    var cart = {};
+    var categories = [];
+    var currentCategory = 'all';
+    var qrScanner = null;
+    var blocageInterval = null;
+    var allIdees = [];
+    var allGoodies = [];
+    var allAdmins = [];
+    var allSondages = [];
+    var allEvenements = [];
+    var allMascottes = [];
+    var allTeasers = [];
+    var userBadges = {};
+    
+    // Calendar state
+    var eventsCalendarDate = new Date();
+    var mascottesCalendarDate = new Date();
+    var mascotteSelectedStart = null;
+    var mascotteSelectedEnd = null;
+    
+    var MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    var MASCOTTE_COLORS = ['mascotte-color-1', 'mascotte-color-2', 'mascotte-color-3', 'mascotte-color-4', 'mascotte-color-5', 'mascotte-color-6'];
+    
+    // Badges configuration
+    var BADGES_CONFIG = [
+      { id: 'cafe5', name: 'Amateur café', emoji: '☕', category: 'café', required: 5 },
+      { id: 'cafe20', name: 'Pro café', emoji: '☕', category: 'café', required: 20 },
+      { id: 'cafe50', name: 'Expert café', emoji: '☕', category: 'café', required: 50 },
+      { id: 'biere5', name: 'Amateur bière', emoji: '🍺', category: 'bière', required: 5 },
+      { id: 'biere20', name: 'Pro bière', emoji: '🍺', category: 'bière', required: 20 },
+      { id: 'biere50', name: 'Expert bière', emoji: '🍺', category: 'bière', required: 50 },
+      { id: 'achats10', name: 'Fidèle', emoji: '⭐', category: 'total', required: 10 },
+      { id: 'achats50', name: 'Super fidèle', emoji: '🌟', category: 'total', required: 50 },
+      { id: 'achats100', name: 'Légende', emoji: '👑', category: 'total', required: 100 }
+    ];
+
+    // ========== SESSION ==========
+    function saveSession() { 
+      if (currentToken && currentUser) { 
+        localStorage.setItem('popoteToken', currentToken); 
+        localStorage.setItem('popoteUser', JSON.stringify(currentUser)); 
+      } 
+    }
+    function loadSession() { 
+      var token = localStorage.getItem('popoteToken'); 
+      var user = localStorage.getItem('popoteUser'); 
+      if (token && user) { 
+        currentToken = token; 
+        currentUser = JSON.parse(user); 
+        return true; 
+      } 
+      return false; 
+    }
+    function clearSession() { 
+      localStorage.removeItem('popoteToken'); 
+      localStorage.removeItem('popoteUser'); 
+      currentToken = null; 
+      currentUser = null; 
+    }
+
+    // ========== PAGES ==========
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+      document.getElementById(pageId).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(function(item) { 
+        item.classList.remove('active'); 
+        if (item.dataset.page === pageId) { item.classList.add('active'); } 
+      });
+      var navbar = document.getElementById('navbar');
+      var pagesWithNavbar = ['pageCompte', 'pageProduits', 'pageIdees', 'pageHistorique', 'pageGoodies', 'pageRecharge', 'pageSondages', 'pageEvenements', 'pageMascottes', 'pageTeasers', 'pageProfil'];
+      navbar.style.display = pagesWithNavbar.includes(pageId) ? 'flex' : 'none';
+      if (pageId === 'pageScanner') { startScanner(); } else { stopScanner(); }
+      window.scrollTo(0, 0);
+    }
+
+    // ========== AUTH ==========
+    function doLogin() {
+      var username = document.getElementById('loginUsername').value.trim().toLowerCase();
+      var password = document.getElementById('loginPassword').value.trim();
+      var msg = document.getElementById('loginMsg');
+      var btn = document.getElementById('loginBtn');
+      if (!username || !password) { msg.className = 'message error'; msg.innerText = 'Veuillez remplir tous les champs'; return; }
+      msg.className = 'message success'; msg.innerText = 'Connexion en cours...'; btn.disabled = true;
+      google.script.run.withSuccessHandler(function(result) {
+        btn.disabled = false;
+        if (result && result.ok) { 
+          currentToken = result.token; 
+          currentUser = result.user; 
+          saveSession(); 
+          msg.innerText = ''; 
+          if (currentUser.bloque) { showBlocage(); } else { loadCompte(); } 
+        }
+        else { msg.className = 'message error'; msg.innerText = result ? result.msg : 'Erreur de connexion'; }
+      }).withFailureHandler(function() { btn.disabled = false; msg.className = 'message error'; msg.innerText = 'Erreur serveur'; }).apiLogin(username, password);
+    }
+
+    function doRegister() {
+      var username = document.getElementById('registerUsername').value.trim().toLowerCase();
+      var nom = document.getElementById('registerNom').value.trim();
+      var password = document.getElementById('registerPassword').value.trim();
+      var msg = document.getElementById('registerMsg');
+      var btn = document.getElementById('registerBtn');
+      if (!username || !nom || !password) { msg.className = 'message error'; msg.innerText = 'Veuillez remplir tous les champs'; return; }
+      if (password.length < 6) { msg.className = 'message error'; msg.innerText = 'Le mot de passe doit faire au moins 6 caractères'; return; }
+      msg.className = 'message success'; msg.innerText = 'Création du compte...'; btn.disabled = true;
+      google.script.run.withSuccessHandler(function(result) {
+        btn.disabled = false;
+        if (result && result.ok) { msg.className = 'message success'; msg.innerText = result.msg; setTimeout(function() { showPage('pageLogin'); document.getElementById('registerMsg').innerText = ''; }, 2000); }
+        else { msg.className = 'message error'; msg.innerText = result ? result.msg : 'Erreur lors de la création'; }
+      }).withFailureHandler(function() { btn.disabled = false; msg.className = 'message error'; msg.innerText = 'Erreur serveur'; }).apiRegister(username, nom, password);
+    }
+
+    function logout() { 
+      if (currentToken) { google.script.run.apiLogout(currentToken); } 
+      clearSession(); 
+      if (blocageInterval) { clearInterval(blocageInterval); blocageInterval = null; } 
+      showPage('pageLogin'); 
+    }
+
+    // ========== COMPTE ==========
+    function loadCompte() {
+      document.getElementById('userName').innerText = currentUser.nom.split(' ')[0];
+      updateSoldeDisplay();
+      document.getElementById('rechargeUsername').innerText = currentUser.username;
+      document.getElementById('badgeCotisant').style.display = currentUser.cotisant ? 'inline-block' : 'none';
+      document.getElementById('detteInfo').style.display = currentUser.detteAutorisee ? 'block' : 'none';
+      showPage('pageCompte'); 
+      loadStats();
+    }
+
+    function updateSoldeDisplay() {
+      var solde = currentUser.solde;
+      var soldeEl = document.getElementById('solde');
+      soldeEl.innerText = formatMontant(solde);
+      soldeEl.className = 'solde-montant' + (solde < 0 ? ' negative' : '');
+      
+      var badge = document.getElementById('badge');
+      if (solde < 0) { 
+        badge.className = 'badge dette'; 
+        badge.innerText = '⚠️ Dette: ' + formatMontant(Math.abs(solde)); 
+      } else if (solde > 0) { 
+        badge.className = 'badge active'; 
+        badge.innerText = '✓ Carte active'; 
+      } else { 
+        badge.className = 'badge low'; 
+        badge.innerText = '⚠️ Rechargez'; 
+      }
+    }
+
+    function loadStats() {
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { 
+          document.getElementById('nbAchats').innerText = result.nbAchatsMois; 
+          document.getElementById('totalDepense').innerText = formatMontant(result.totalDepenseMois); 
+          if (result.badges) { userBadges = result.badges; }
+        }
+      }).apiGetStats(currentToken);
+    }
+
+    function refreshUserData() {
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) {
+          currentUser = result.user; 
+          saveSession();
+          if (currentUser.bloque) { showBlocage(); }
+          else { updateSoldeDisplay(); document.getElementById('badgeCotisant').style.display = currentUser.cotisant ? 'inline-block' : 'none'; }
+        }
+      }).apiGetUser(currentToken);
+    }
+    // ========== PROFIL ==========
+    function showProfil() {
+      showPage('pageProfil');
+      var avatar = localStorage.getItem('popoteAvatar') || '👤';
+      document.getElementById('profileAvatar').innerText = avatar;
+      document.getElementById('profileName').innerText = currentUser.nom;
+      document.getElementById('profileUsername').innerText = '@' + currentUser.username;
+      document.getElementById('profileId').innerText = currentUser.username;
+      
+      // Show cotisant status
+      if (currentUser.cotisant) {
+        document.getElementById('profileCotisantBadge').style.display = 'block';
+        document.getElementById('profileNonCotisantBadge').style.display = 'none';
+      } else {
+        document.getElementById('profileCotisantBadge').style.display = 'none';
+        document.getElementById('profileNonCotisantBadge').style.display = 'block';
+      }
+      
+      var status = [];
+      if (currentUser.detteAutorisee) status.push('Dette autorisée');
+      if (currentUser.role === 'ADMIN') status.push('Administrateur');
+      document.getElementById('profileStatus').innerText = status.length > 0 ? status.join(', ') : 'Membre standard';
+      document.getElementById('profileSolde').innerText = formatMontant(currentUser.solde);
+      
+      renderBadges();
+    }
+
+    function renderBadges() {
+      var html = '';
+      BADGES_CONFIG.forEach(function(badge) {
+        var count = 0;
+        if (badge.category === 'total') {
+          count = userBadges.total || 0;
+        } else if (badge.category === 'café') {
+          count = userBadges.cafe || 0;
+        } else if (badge.category === 'bière') {
+          count = userBadges.biere || 0;
+        }
+        
+        var earned = count >= badge.required;
+        var progress = Math.min(100, (count / badge.required) * 100);
+        
+        html += '<div class="badge-item ' + (earned ? 'earned' : 'locked') + '">';
+        html += '<div class="badge-emoji">' + badge.emoji + '</div>';
+        html += '<div class="badge-name">' + badge.name + '</div>';
+        html += '<div class="badge-progress">' + count + '/' + badge.required + '</div>';
+        html += '<div class="badge-progress-bar"><div class="badge-progress-fill" style="width: ' + progress + '%"></div></div>';
+        html += '</div>';
+      });
+      document.getElementById('badgesGrid').innerHTML = html;
+    }
+
+    function changeAvatar() {
+      document.getElementById('modalAvatar').classList.remove('hidden');
+    }
+
+    function closeAvatarModal() {
+      document.getElementById('modalAvatar').classList.add('hidden');
+    }
+
+    function selectAvatar(emoji) {
+      localStorage.setItem('popoteAvatar', emoji);
+      document.getElementById('profileAvatar').innerText = emoji;
+      closeAvatarModal();
+    }
+
+    function changePassword() {
+      var oldPwd = document.getElementById('oldPassword').value.trim();
+      var newPwd = document.getElementById('newPassword').value.trim();
+      var confirmPwd = document.getElementById('confirmPassword').value.trim();
+      
+      if (!oldPwd || !newPwd || !confirmPwd) {
+        showModal('⚠️', 'Erreur', 'Veuillez remplir tous les champs');
+        return;
+      }
+      if (newPwd.length < 6) {
+        showModal('⚠️', 'Erreur', 'Le nouveau mot de passe doit faire au moins 6 caractères');
+        return;
+      }
+      if (newPwd !== confirmPwd) {
+        showModal('⚠️', 'Erreur', 'Les mots de passe ne correspondent pas');
+        return;
+      }
+      
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) {
+          showModal('✅', 'Succès', 'Mot de passe modifié avec succès');
+          document.getElementById('oldPassword').value = '';
+          document.getElementById('newPassword').value = '';
+          document.getElementById('confirmPassword').value = '';
+        } else {
+          showModal('❌', 'Erreur', result ? result.msg : 'Erreur');
+        }
+      }).apiChangePassword(currentToken, oldPwd, newPwd);
+    }
+
+    // ========== PRODUITS ==========
+    function loadProduits() {
+      showPage('pageProduits');
+      document.getElementById('productsGrid').innerHTML = '<div class="loading"><div class="spinner"></div><span>Chargement...</span></div>';
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { allProducts = result.data; extractCategories(); renderCategories(); renderProducts(); }
+      }).apiGetProduits(currentToken);
+    }
+
+    function extractCategories() { var cats = {}; allProducts.forEach(function(p) { var cat = p.categorie || 'Autres'; cats[cat] = true; }); categories = Object.keys(cats).sort(); }
+    function renderCategories() { var html = '<div class="cat-tab active" onclick="filterCategory(\'all\')">Tous</div>'; categories.forEach(function(cat) { html += '<div class="cat-tab" onclick="filterCategory(\'' + cat + '\')">' + cat + '</div>'; }); document.getElementById('categoryTabs').innerHTML = html; }
+    function filterCategory(cat) { currentCategory = cat; document.querySelectorAll('.cat-tab').forEach(function(tab, index) { tab.classList.remove('active'); if ((cat === 'all' && index === 0) || tab.innerText === cat) { tab.classList.add('active'); } }); renderProducts(); }
+
+    function renderProducts() {
+      var filtered = allProducts;
+      if (currentCategory !== 'all') { filtered = allProducts.filter(function(p) { return (p.categorie || 'Autres') === currentCategory; }); }
+      var html = '';
+      filtered.forEach(function(p) {
+        var qty = cart[p.code] || 0;
+        var inCart = qty > 0;
+        var icon = getProductIcon(p.nom);
+        html += '<div class="product-card' + (inCart ? ' in-cart' : '') + '">';
+        html += '<div class="product-img">' + icon + '</div>';
+        html += '<div class="product-name">' + p.nom + '</div>';
+        html += '<div class="product-price">' + formatMontant(p.prix) + '</div>';
+        html += '<div class="product-controls">';
+        if (qty > 0) { html += '<button class="qty-btn" onclick="updateCart(\'' + p.code + '\', -1)">−</button><span class="qty-display">' + qty + '</span>'; }
+        html += '<button class="qty-btn" onclick="updateCart(\'' + p.code + '\', 1)">+</button></div></div>';
+      });
+      document.getElementById('productsGrid').innerHTML = html;
+      updateCartFloat();
+    }
+
+    function getProductIcon(nom) {
+      var n = nom.toLowerCase();
+      if (n.includes('café') || n.includes('cafe')) return '☕';
+      if (n.includes('thé') || n.includes('the')) return '🍵';
+      if (n.includes('chocolat')) return '🍫';
+      if (n.includes('coca') || n.includes('fanta') || n.includes('sprite') || n.includes('soda')) return '🥤';
+      if (n.includes('eau')) return '💧';
+      if (n.includes('jus')) return '🧃';
+      if (n.includes('bière') || n.includes('biere')) return '🍺';
+      if (n.includes('cookie') || n.includes('biscuit')) return '🍪';
+      if (n.includes('chips')) return '🥔';
+      if (n.includes('bonbon')) return '🍬';
+      if (n.includes('sandwich')) return '🥪';
+      return '📦';
+    }
+
+    function updateCart(code, delta) { if (!cart[code]) cart[code] = 0; cart[code] += delta; if (cart[code] <= 0) delete cart[code]; renderProducts(); }
+
+    function updateCartFloat() {
+      var total = 0; var count = 0;
+      Object.keys(cart).forEach(function(code) { var qty = cart[code]; var product = allProducts.find(function(p) { return p.code === code; }); if (product) { total += product.prix * qty; count += qty; } });
+      var cartFloat = document.getElementById('cartFloat');
+      if (count > 0) { cartFloat.classList.remove('hidden'); document.getElementById('cartCount').innerText = count + ' article' + (count > 1 ? 's' : ''); document.getElementById('cartTotal').innerText = formatMontant(total); }
+      else { cartFloat.classList.add('hidden'); }
+    }
+
+    function validerPanier() {
+      var items = Object.keys(cart); if (items.length === 0) return;
+      var totalItems = 0; items.forEach(function(code) { totalItems += cart[code]; });
+      var processed = 0; var errors = [];
+      items.forEach(function(code) {
+        var qty = cart[code];
+        for (var i = 0; i < qty; i++) {
+          google.script.run.withSuccessHandler(function(result) { 
+            processed++; 
+            if (!result || !result.ok) { errors.push(result ? result.msg : 'Erreur'); } 
+            if (processed === totalItems) { finishPanier(errors); } 
+          }).withFailureHandler(function() { 
+            processed++; errors.push('Erreur serveur'); 
+            if (processed === totalItems) { finishPanier(errors); } 
+          }).apiAchat(currentToken, code);
+        }
+      });
+    }
+
+    function finishPanier(errors) { cart = {}; renderProducts(); if (errors.length > 0) { showModal('⚠️', 'Attention', errors[0]); } else { showModal('✅', 'Achat effectué !', 'Votre commande a bien été enregistrée.'); } refreshUserData(); loadStats(); }
+
+    // ========== SCANNER ==========
+    function startScanner() {
+      if (qrScanner) return;
+      var container = document.getElementById('qr-reader'); if (!container) return;
+      qrScanner = new Html5Qrcode('qr-reader');
+      qrScanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 250, height: 250 } }, function(decodedText) { qrScanner.pause(); processQRCode(decodedText); }, function() {}).catch(function() {});
+    }
+    function stopScanner() { if (qrScanner) { qrScanner.stop().then(function() { qrScanner = null; }).catch(function() { qrScanner = null; }); } }
+    function processQRCode(code) {
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) { showModal('✅', result.nomProduit, 'Prix: ' + formatMontant(result.prix) + '\nNouveau solde: ' + formatMontant(result.nouveauSolde)); currentUser.solde = result.nouveauSolde; saveSession(); loadStats(); }
+        else { showModal('❌', 'Erreur', result ? result.msg : 'Produit non trouvé'); }
+        setTimeout(function() { if (qrScanner) qrScanner.resume(); }, 2000);
+      }).withFailureHandler(function() { showModal('❌', 'Erreur', 'Erreur de connexion'); setTimeout(function() { if (qrScanner) qrScanner.resume(); }, 2000); }).apiAchat(currentToken, code);
+    }
+
+    // ========== HISTORIQUE ==========
+    function loadHistorique() {
+      showPage('pageHistorique');
+      document.getElementById('historiqueList').innerHTML = '<div class="loading"><div class="spinner"></div><span>Chargement...</span></div>';
+      google.script.run.withSuccessHandler(function(result) { if (result && result.ok) { renderHistorique(result.data); } else { document.getElementById('historiqueList').innerHTML = '<div class="historique-empty">Erreur de chargement</div>'; } }).withFailureHandler(function() { document.getElementById('historiqueList').innerHTML = '<div class="historique-empty">Erreur de connexion</div>'; }).apiGetTransactions(currentToken);
+    }
+    function renderHistorique(transactions) {
+      if (!transactions || transactions.length === 0) { document.getElementById('historiqueList').innerHTML = '<div class="historique-empty">Aucune transaction</div>'; return; }
+      var html = '';
+      transactions.forEach(function(tx) {
+        var date = new Date(tx.date); var dateStr = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }); var timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); var isDebit = tx.montant < 0;
+        html += '<div class="historique-item"><div class="historique-info"><div class="historique-product">' + tx.nomproduit + '</div><div class="historique-date">' + dateStr + ' à ' + timeStr + '</div></div><div class="historique-montant ' + (isDebit ? 'debit' : 'credit') + '">' + (isDebit ? '' : '+') + formatMontant(tx.montant) + '</div></div>';
+      });
+      document.getElementById('historiqueList').innerHTML = html;
+    }
+    // ========== SONDAGES ==========
+    function loadSondages() {
+      showPage('pageSondages');
+      document.getElementById('sondagesList').innerHTML = '<div class="loading"><div class="spinner"></div><span>Chargement...</span></div>';
+      google.script.run.withSuccessHandler(function(result) { if (result && result.ok) { allSondages = result.data; renderSondages(); } else { document.getElementById('sondagesList').innerHTML = '<div class="historique-empty">Erreur de chargement</div>'; } }).apiGetSondages(currentToken);
+    }
+    function renderSondages() {
+      if (!allSondages || allSondages.length === 0) { document.getElementById('sondagesList').innerHTML = '<div class="historique-empty">Aucun sondage en cours</div>'; return; }
+      var html = '';
+      allSondages.forEach(function(sondage) {
+        var totalVotes = 0; sondage.options.forEach(function(opt) { totalVotes += opt.votes; });
+        html += '<div class="sondage-card"><div class="sondage-titre">' + escapeHtml(sondage.titre) + '</div>';
+        if (sondage.description) { html += '<div class="sondage-description">' + escapeHtml(sondage.description) + '</div>'; }
+        html += '<div class="sondage-type">' + (sondage.type === 'multiple' ? '✓ Choix multiples possibles' : '○ Un seul choix') + '</div>';
+        sondage.options.forEach(function(opt) {
+          var isSelected = sondage.userVotes.includes(opt.id); var percent = totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0;
+          html += '<div class="sondage-option' + (isSelected ? ' selected' : '') + '" onclick="toggleVote(\'' + sondage.id + '\', \'' + opt.id + '\', \'' + sondage.type + '\')"><div class="sondage-option-check">' + (isSelected ? '✓' : '') + '</div><div class="sondage-option-text">' + escapeHtml(opt.texte) + '</div><div class="sondage-option-votes">' + opt.votes + '</div></div>';
+          html += '<div class="sondage-progress"><div class="sondage-progress-bar" style="width: ' + percent + '%"></div></div>';
+        });
+        html += '</div>';
+      });
+      document.getElementById('sondagesList').innerHTML = html;
+    }
+    function toggleVote(idSondage, idOption, type) {
+      var sondage = allSondages.find(function(s) { return s.id === idSondage; }); if (!sondage) return;
+      var newVotes = [];
+      if (type === 'unique') { newVotes = [idOption]; } else { newVotes = sondage.userVotes.slice(); var index = newVotes.indexOf(idOption); if (index > -1) { newVotes.splice(index, 1); } else { newVotes.push(idOption); } }
+      if (newVotes.length === 0) { showModal('⚠️', 'Attention', 'Vous devez sélectionner au moins une option'); return; }
+      google.script.run.withSuccessHandler(function(result) { if (result && result.ok) { loadSondages(); } else { showModal('❌', 'Erreur', result ? result.msg : 'Erreur'); } }).apiVoterSondage(currentToken, idSondage, newVotes);
+    }
+
+    // ========== EVENEMENTS AVEC CALENDRIER ==========
+    function loadEvenements() {
+      showPage('pageEvenements');
+      document.getElementById('evenementsList').innerHTML = '<div class="loading"><div class="spinner"></div><span>Chargement...</span></div>';
+      google.script.run.withSuccessHandler(function(result) { 
+        if (result && result.ok) { 
+          allEvenements = result.data; 
+          renderEventsCalendar();
+          renderEvenements(); 
+        } else { 
+          document.getElementById('evenementsList').innerHTML = '<div class="historique-empty">Erreur de chargement</div>'; 
+        } 
+      }).apiGetEvenements(currentToken);
+    }
+    
+    function changeEventsMonth(delta) {
+      eventsCalendarDate.setMonth(eventsCalendarDate.getMonth() + delta);
+      renderEventsCalendar();
+    }
+    
+    function renderEventsCalendar() {
+      var year = eventsCalendarDate.getFullYear();
+      var month = eventsCalendarDate.getMonth();
+      document.getElementById('eventsCalendarTitle').innerText = MONTHS[month] + ' ' + year;
+      
+      var firstDay = new Date(year, month, 1);
+      var lastDay = new Date(year, month + 1, 0);
+      var startDay = (firstDay.getDay() + 6) % 7;
+      var daysInMonth = lastDay.getDate();
+      var today = new Date();
+      
+      // Build event dates map
+      var eventDates = {};
+      allEvenements.forEach(function(evt) {
+        var d = new Date(evt.dateEvent);
+        var key = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+        if (!eventDates[key]) eventDates[key] = [];
+        eventDates[key].push(evt);
+      });
+      
+      var html = '';
+      for (var i = 0; i < startDay; i++) {
+        html += '<div class="calendar-day empty"></div>';
+      }
+      
+      for (var day = 1; day <= daysInMonth; day++) {
+        var isToday = (day === today.getDate() && month === today.getMonth() && year === today.getFullYear());
+        var key = year + '-' + (month + 1) + '-' + day;
+        var dayEvents = eventDates[key] || [];
+        
+        var classes = 'calendar-day' + (isToday ? ' today' : '');
+        html += '<div class="' + classes + '">';
+        html += '<div class="calendar-day-number">' + day + '</div>';
+        html += '<div class="calendar-day-events">';
+        dayEvents.forEach(function(evt) {
+          html += '<div class="calendar-day-event" style="background: var(--blue);">' + escapeHtml(evt.titre.substring(0, 12)) + '</div>';
+        });
+        html += '</div></div>';
+      }
+      
+      document.getElementById('eventsCalendarDays').innerHTML = html;
+    }
+    
+    function renderEvenements() {
+      if (!allEvenements || allEvenements.length === 0) { document.getElementById('evenementsList').innerHTML = '<div class="historique-empty">Aucun événement à venir</div>'; return; }
+      var html = '';
+      allEvenements.forEach(function(evt) {
+        var dateEvt = new Date(evt.dateEvent); var dateStr = dateEvt.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+        html += '<div class="event-card' + (evt.isPast ? ' past' : '') + '"><div class="event-date-badge">' + dateStr + '</div><div class="event-titre">' + escapeHtml(evt.titre) + '</div>';
+        if (evt.description) { html += '<div class="event-description">' + escapeHtml(evt.description) + '</div>'; }
+        html += '<div class="event-meta">'; if (evt.lieu) { html += '<div class="event-meta-item">📍 ' + escapeHtml(evt.lieu) + '</div>'; }
+        html += '<div class="event-meta-item">👥 ' + evt.nbInscrits + ' inscrit(s)</div></div>';
+        if (!evt.gratuit) {
+          html += '<div class="event-prix">';
+          if (currentUser.cotisant) { html += '<div class="event-prix-item user">Cotisant : ' + formatMontant(evt.prixCotisant) + '</div><div class="event-prix-item">Non-cotisant : ' + formatMontant(evt.prixNormal) + '</div>'; }
+          else { html += '<div class="event-prix-item">Cotisant : ' + formatMontant(evt.prixCotisant) + '</div><div class="event-prix-item user">Non-cotisant : ' + formatMontant(evt.prixNormal) + '</div>'; }
+          html += '</div>';
+        } else { html += '<div class="event-prix"><div class="event-prix-item user">Gratuit</div></div>'; }
+        if (evt.inscriptionRequise && !evt.isPast) { html += '<div class="event-actions">'; if (evt.userInscrit) { html += '<button class="btn btn-danger btn-small" onclick="desinscrireEvenement(\'' + evt.id + '\')">Se désinscrire</button>'; } else { html += '<button class="btn btn-success btn-small" onclick="inscrireEvenement(\'' + evt.id + '\')">S\'inscrire</button>'; } html += '</div>'; }
+        html += '</div>';
+      });
+      document.getElementById('evenementsList').innerHTML = html;
+    }
+    function inscrireEvenement(idEvent) { google.script.run.withSuccessHandler(function(result) { if (result && result.ok) { var msg = 'Inscription confirmée !'; if (result.prix > 0) { msg += '\n' + formatMontant(result.prix) + ' débités de votre compte.'; } showModal('✅', 'Inscrit !', msg); loadEvenements(); refreshUserData(); } else { showModal('❌', 'Erreur', result ? result.msg : 'Erreur'); } }).apiInscrireEvenement(currentToken, idEvent); }
+    function desinscrireEvenement(idEvent) { if (!confirm('Êtes-vous sûr de vouloir vous désinscrire ?')) return; google.script.run.withSuccessHandler(function(result) { if (result && result.ok) { var msg = 'Désinscription effectuée.'; if (result.remboursement > 0) { msg += '\n' + formatMontant(result.remboursement) + ' remboursés.'; } showModal('✅', 'Désinscrit', msg); loadEvenements(); refreshUserData(); } else { showModal('❌', 'Erreur', result ? result.msg : 'Erreur'); } }).apiDesinscrireEvenement(currentToken, idEvent); }
+    // ========== MASCOTTES AVEC CALENDRIER ET RESERVATION ==========
+    function loadMascottes() {
+      showPage('pageMascottes');
+      document.getElementById('mascottesList').innerHTML = '<div class="loading"><div class="spinner"></div><span>Chargement...</span></div>';
+      google.script.run.withSuccessHandler(function(result) { 
+        if (result && result.ok) { 
+          allMascottes = result.data; 
+          resetMascotteSelection();
+          renderMascottesCalendar();
+          renderMyMascotteReservations();
+          renderMascottes(); 
+        } else { 
+          document.getElementById('mascottesList').innerHTML = '<div class="historique-empty">Erreur de chargement</div>'; 
+        } 
+      }).apiGetMascottes(currentToken);
+    }
+    
+    function changeMascottesMonth(delta) {
+      mascottesCalendarDate.setMonth(mascottesCalendarDate.getMonth() + delta);
+      renderMascottesCalendar();
+    }
+    
+    function getMascotteColor(index) {
+      return MASCOTTE_COLORS[index % MASCOTTE_COLORS.length];
+    }
+    
+    function renderMascottesCalendar() {
+      var year = mascottesCalendarDate.getFullYear();
+      var month = mascottesCalendarDate.getMonth();
+      document.getElementById('mascottesCalendarTitle').innerText = MONTHS[month] + ' ' + year;
+      
+      var firstDay = new Date(year, month, 1);
+      var lastDay = new Date(year, month + 1, 0);
+      var startDay = (firstDay.getDay() + 6) % 7;
+      var daysInMonth = lastDay.getDate();
+      var today = new Date();
+      today.setHours(0,0,0,0);
+      
+      // Build reservation map per day
+      var reservationDates = {};
+      allMascottes.forEach(function(m, mIndex) {
+        if (m.reservations) {
+          m.reservations.forEach(function(r) {
+            var start = new Date(r.dateDebut);
+            var end = new Date(r.dateFin);
+            var current = new Date(start);
+            current.setHours(0,0,0,0);
+            end.setHours(0,0,0,0);
+            
+            while (current <= end) {
+              var key = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
+              if (!reservationDates[key]) reservationDates[key] = [];
+              reservationDates[key].push({
+                mascotte: m.nom,
+                mascotteId: m.id,
+                colorClass: getMascotteColor(mIndex),
+                isMine: r.username === currentUser.username
+              });
+              current.setDate(current.getDate() + 1);
+            }
+          });
+        }
+      });
+      
+      var html = '';
+      for (var i = 0; i < startDay; i++) {
+        html += '<div class="calendar-day empty"></div>';
+      }
+      
+      for (var day = 1; day <= daysInMonth; day++) {
+        var currentDate = new Date(year, month, day);
+        var isToday = (day === today.getDate() && month === today.getMonth() && year === today.getFullYear());
+        var isPast = currentDate < today;
+        var key = year + '-' + (month + 1) + '-' + day;
+        var dayReservations = reservationDates[key] || [];
+        
+        var isSelectedStart = mascotteSelectedStart && mascotteSelectedStart.getDate() === day && mascotteSelectedStart.getMonth() === month && mascotteSelectedStart.getFullYear() === year;
+        var isSelectedEnd = mascotteSelectedEnd && mascotteSelectedEnd.getDate() === day && mascotteSelectedEnd.getMonth() === month && mascotteSelectedEnd.getFullYear() === year;
+        var isInRange = mascotteSelectedStart && mascotteSelectedEnd && currentDate >= mascotteSelectedStart && currentDate <= mascotteSelectedEnd;
+        
+        var classes = 'calendar-day' + (isToday ? ' today' : '') + (isPast ? ' past' : '');
+        if (isSelectedStart || isSelectedEnd) classes += ' selected';
+        else if (isInRange) classes += ' selected';
+        
+        var clickHandler = isPast ? '' : ' onclick="selectMascotteDate(' + year + ',' + month + ',' + day + ')"';
+        
+        html += '<div class="' + classes + '" style="' + (isPast ? 'opacity: 0.5; cursor: not-allowed;' : '') + '"' + clickHandler + '>';
+        html += '<div class="calendar-day-number">' + day + '</div>';
+        html += '<div class="calendar-day-events">';
+        dayReservations.forEach(function(res) {
+          var style = res.isMine ? 'background: var(--green);' : '';
+          html += '<div class="calendar-day-event ' + res.colorClass + '" style="' + style + '">' + escapeHtml(res.mascotte.substring(0, 8)) + '</div>';
+        });
+        html += '</div></div>';
+      }
+      
+      document.getElementById('mascottesCalendarDays').innerHTML = html;
+      
+      // Render legend
+      var legendHtml = '<div class="calendar-legend-item"><div class="calendar-legend-dot" style="background: var(--black);"></div>Aujourd\'hui</div>';
+      legendHtml += '<div class="calendar-legend-item"><div class="calendar-legend-dot" style="background: var(--green);"></div>Ma réservation</div>';
+      allMascottes.forEach(function(m, mIndex) {
+        legendHtml += '<div class="calendar-legend-item"><div class="calendar-legend-dot ' + getMascotteColor(mIndex) + '"></div>' + escapeHtml(m.nom) + '</div>';
+      });
+      document.getElementById('mascottesLegend').innerHTML = legendHtml;
+      
+      // Populate mascotte select
+      var selectHtml = '<option value="">-- Choisir une mascotte --</option>';
+      allMascottes.forEach(function(m, mIndex) {
+        selectHtml += '<option value="' + m.id + '" data-index="' + mIndex + '">' + escapeHtml(m.nom) + '</option>';
+      });
+      document.getElementById('mascotteSelect').innerHTML = selectHtml;
+    }
+    
+    function selectMascotteDate(year, month, day) {
+      var clickedDate = new Date(year, month, day);
+      
+      if (!mascotteSelectedStart || (mascotteSelectedStart && mascotteSelectedEnd)) {
+        // Start new selection
+        mascotteSelectedStart = clickedDate;
+        mascotteSelectedEnd = null;
+        document.getElementById('selectedDatesText').innerHTML = '<strong>Début:</strong> ' + formatDate(clickedDate) + ' - Sélectionnez la date de fin';
+      } else {
+        // Set end date
+        if (clickedDate < mascotteSelectedStart) {
+          mascotteSelectedEnd = mascotteSelectedStart;
+          mascotteSelectedStart = clickedDate;
+        } else {
+          mascotteSelectedEnd = clickedDate;
+        }
+        document.getElementById('selectedDatesText').innerHTML = '<strong>' + formatDate(mascotteSelectedStart) + '</strong> → <strong>' + formatDate(mascotteSelectedEnd) + '</strong>';
+      }
+      
+      document.getElementById('mascotteReservationForm').style.display = 'block';
+      document.getElementById('mascotteSelect').value = '';
+      document.getElementById('mascotteAvailabilityMsg').innerHTML = '';
+      document.getElementById('confirmReservationBtn').style.display = 'none';
+      renderMascottesCalendar();
+    }
+    
+    function resetMascotteSelection() {
+      mascotteSelectedStart = null;
+      mascotteSelectedEnd = null;
+      document.getElementById('mascotteReservationForm').style.display = 'none';
+      document.getElementById('selectedDatesText').innerText = 'Sélectionnez une date de début';
+      document.getElementById('mascotteSelect').value = '';
+      document.getElementById('mascotteAvailabilityMsg').innerHTML = '';
+      document.getElementById('confirmReservationBtn').style.display = 'none';
+    }
+    
+    function checkMascotteAvailability() {
+      var selectedMascotteId = document.getElementById('mascotteSelect').value;
+      var msgEl = document.getElementById('mascotteAvailabilityMsg');
+      var btnEl = document.getElementById('confirmReservationBtn');
+      
+      if (!selectedMascotteId) {
+        msgEl.innerHTML = '';
+        btnEl.style.display = 'none';
+        return;
+      }
+      
+      if (!mascotteSelectedStart || !mascotteSelectedEnd) {
+        msgEl.innerHTML = '<span style="color: var(--orange);">⚠️ Veuillez sélectionner une date de début et de fin</span>';
+        btnEl.style.display = 'none';
+        return;
+      }
+      
+      var mascotte = allMascottes.find(function(m) { return m.id === selectedMascotteId; });
+      if (!mascotte) return;
+      
+      // Check for conflicts
+      var hasConflict = false;
+      if (mascotte.reservations) {
+        mascotte.reservations.forEach(function(r) {
+          var rStart = new Date(r.dateDebut);
+          var rEnd = new Date(r.dateFin);
+          rStart.setHours(0,0,0,0);
+          rEnd.setHours(0,0,0,0);
+          
+          // Check overlap
+          if (mascotteSelectedStart <= rEnd && mascotteSelectedEnd >= rStart) {
+            hasConflict = true;
+          }
+        });
+      }
+      
+      if (hasConflict) {
+        msgEl.innerHTML = '<span style="color: var(--red);">❌ Cette mascotte est déjà réservée sur ces dates</span>';
+        btnEl.style.display = 'none';
+      } else {
+        msgEl.innerHTML = '<span style="color: var(--green);">✅ ' + escapeHtml(mascotte.nom) + ' est disponible !</span>';
+        btnEl.style.display = 'block';
+      }
+    }
+    
+    function confirmMascotteReservation() {
+      var selectedMascotteId = document.getElementById('mascotteSelect').value;
+      if (!selectedMascotteId || !mascotteSelectedStart || !mascotteSelectedEnd) {
+        showModal('⚠️', 'Erreur', 'Veuillez sélectionner une mascotte et des dates');
+        return;
+      }
+      
+      var dateDebut = mascotteSelectedStart.toISOString().split('T')[0];
+      var dateFin = mascotteSelectedEnd.toISOString().split('T')[0];
+      
+      google.script.run.withSuccessHandler(function(result) {
+        if (result && result.ok) {
+          showModal('✅', 'Réservé !', result.msg);
+          loadMascottes();
+        } else {
+          showModal('❌', 'Erreur', result ? result.msg : 'Erreur');
+        }
+      }).apiReserverMascotte(currentToken, selectedMascotteId, dateDebut, dateFin);
+    }
+    
+    function renderMyMascotteReservations() {
+      var html = '';
+      var myReservations = [];
+      
+      allMascottes.forEach(function(m, mIndex) {
+        if (m.reservations) {
+          m.reservations.forEach(function(r) {
+            if (r.username === currentUser.username) {
+              myReservations.push({
+                mascotte: m.nom,
+                colorClass: getMascotteColor(mIndex),
+                dateDebut: new Date(r.dateDebut),
+                dateFin: new Date(r.dateFin),
+                id: r.id
+              });
+            }
+          });
+        }
+      });
+      
+      if (myReservations.length === 0) {
+        html = '<p style="color: var(--grey); text-align: center;">Aucune réservation</p>';
+      } else {
+        myReservations.forEach(function(r) {
+          html += '<div class="historique-item">';
+          html += '<div class="historique-info">';
+          html += '<div class="historique-product">🐊 ' + escapeHtml(r.mascotte) + '</div>';
+          html += '<div class="historique-date">' + formatDate(r.dateDebut) + ' → ' + formatDate(r.dateFin) + '</div>';
+          html += '</div>';
+          html += '<button class="btn btn-danger btn-small" style="width: auto; margin: 0;" onclick="annulerReservationMascotte(\'' + r.id + '\')">Annuler</button>';
+          html += '</div>';
+        });
+      }
+      
+      document.getElementById('myMascotteReservations').innerHTML = html;
+    }
+    
+    function renderMascottes() {
+      if (!allMascottes || allMascottes.length === 0) { document.getElementById('mascottesList').innerHTML = '<div class="historique-empty">Aucune mascotte disponible</div>'; return; }
+      var html = '';
+      allMascottes.forEach(function(m, mIndex) {
+        html += '<div class="mascotte-card"><div class="mascotte-emoji">🐊</div><div class="mascotte-nom">' + escapeHtml(m.nom) + '</div>';
+        if (m.description) { html += '<div class="mascotte-description">' + escapeHtml(m.description) + '</div>'; }
+        var colorDot = '<span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px;" class="' + getMascotteColor(mIndex) + '"></span>';
+        if (m.disponible) { 
+          html += '<div class="mascotte-status disponible">' + colorDot + '✓ Disponible</div>'; 
+        } else { 
+          html += '<div class="mascotte-status indisponible">' + colorDot + '✗ Réservé</div>'; 
+          if (m.reservationActuelle) { 
+            var finResa = new Date(m.reservationActuelle.dateFin); 
+            html += '<div class="mascotte-reservation-info">Retour prévu le ' + formatDate(finResa) + '</div>'; 
+          } 
+        }
+        html += '</div>';
+      });
+      document.getElementById('mascottesList').innerHTML = html;
+    }
+    
+    function annulerReservationMascotte(idReservation) { 
+      if (!confirm('Annuler cette réservation ?')) return; 
+      google.script.run.withSuccessHandler(function(result) { 
+        if (result && result.ok) { showModal('✅', 'Annulé', result.msg); loadMascottes(); } 
+        else { showModal('❌', 'Erreur', result ? result.msg : 'Erreur'); } 
+      }).apiAnnulerReservationMascotte(currentToken, idReservation); 
+    }
+    // ========== TEASERS ==========
+    function loadTeasers() {
+      showPage('pageTeasers');
+      document.getElementById('teasersList').innerHTML = '<div class="loading"><div class="spinner"></div><span>Chargement...</span></div>';
+      google.script.run.withSuccessHandler(function(result) { if (result && result.ok) { allTeasers = result.data; renderTeasers(); } else { document.getElementById('teasersList').innerHTML = '<div class="historique-empty">Erreur de chargement</div>'; } }).apiGetTeasers(currentToken);
+    }
+    function renderTeasers() {
+      if (!allTeasers || allTeasers.length === 0) { document.getElementById('teasersList').innerHTML = '<div class="historique-empty">Aucun produit à venir</div>'; return; }
+      var html = '';
+      allTeasers.forEach(function(t) {
+        html += '<div class="teaser-card">'; if (t.precommandePossible) { html += '<div class="teaser-badge">Précommande</div>'; }
+        html += '<div class="teaser-emoji">🆕</div><div class="teaser-nom">' + escapeHtml(t.nom) + '</div>';
+        if (t.description) { html += '<div class="teaser-description">' + escapeHtml(t.description) + '</div>'; }
+        html += '<div class="teaser-meta">'; if (t.dateSortie) { var dateSortie = new Date(t.dateSortie); html += '<div class="teaser-date">📅 Sortie : ' + formatDate(dateSortie) + '</div>'; }
+        if (t.prix > 0) { html += '<div class="teaser-prix">' + formatMontant(t.prix) + '</div>'; } html += '</div>';
+        if (t.nbPrecommandes > 0) { html += '<div class="teaser-precommandes">' + t.nbPrecommandes + ' précommande(s)</div>'; }
+        if (t.precommandePossible) { 
+          if (t.userPrecommande) { 
+            html += '<div style="background: #dcfce7; border-radius: var(--radius-md); padding: 12px; margin-bottom: 12px; text-align: center;">';
+            html += '<p style="font-size: 13px; color: var(--green); font-weight: 600;">✓ Vous avez précommandé ce produit</p>';
+            if (!t.userPrecommandePaid && t.prix > 0) {
+              html += '<p style="font-size: 12px; color: var(--grey); margin-top: 4px;">Statut: En attente de paiement</p>';
+            } else if (t.userPrecommandePaid) {
+              html += '<p style="font-size: 12px; color: var(--green); margin-top: 4px;">✓ Payé</p>';
+            }
+            html += '</div>';
+            if (!t.userPrecommandePaid && t.prix > 0) {
+              html += '<a href="https://pay.sumup.com/b2c/QRNA6C6I" target="_blank" style="text-decoration: none;">';
+              html += '<button class="btn btn-success btn-small" style="margin-bottom: 8px;">💳 Payer ' + formatMontant(t.prix) + ' via SumUp</button>';
+              html += '</a>';
+              html += '<p style="font-size: 11px; color: var(--grey); text-align: center; margin-bottom: 8px;">Indiquez votre identifiant <strong>' + currentUser.username + '</strong> lors du paiement</p>';
+            }
+            html += '<button class="btn btn-danger btn-small" onclick="annulerPrecommande(\'' + t.id + '\')">Annuler ma précommande</button>'; 
+          } else { 
+            html += '<button class="btn btn-success btn-small" onclick="precommanderTeaser(\'' + t.id + '\')">Précommander</button>'; 
+          } 
+        }
+        html += '</div>';
+      });
+      document.getElementById('teasersList').innerHTML = html;
+    }
+    function precommanderTeaser(idTeaser) { google.script.run.withSuccessHandler(function(result) { if (result && result.ok) { showModal('✅', 'Précommandé !', result.msg); loadTeasers(); } else { showModal('❌', 'Erreur', result ? result.msg : 'Erreur'); } }).apiPrecommanderTeaser(currentToken, idTeaser); }
+    function annulerPrecommande(idTeaser) { if (!confirm('Annuler cette précommande ?')) return; google.script.run.withSuccessHandler(function(result) { if (result && result.ok) { showModal('✅', 'Annulé', result.msg); loadTeasers(); } else { showModal('❌', 'Erreur', result ? result.msg : 'Erreur'); } }).apiAnnulerPrecommande(currentToken, idTeaser); }
+
+    // ========== IDEES ==========
+    function loadIdees() {
+      showPage('pageIdees');
+      document.getElementById('ideesList').innerHTML = '<div class="loading"><div class="spinner"></div><span>Chargement...</span></div>';
+      google.script.run.withSuccessHandler(function(result) { if (result && result.ok) { allIdees = result.data; renderIdees(); } else { document.getElementById('ideesList').innerHTML = '<div class="historique-empty">Erreur de chargement</div>'; } }).apiGetIdees(currentToken, 50);
+    }
+    function renderIdees() {
+      if (!allIdees || allIdees.length === 0) { document.getElementById('ideesList').innerHTML = '<div class="historique-empty">Aucune idée pour le moment. Soyez le premier !</div>'; return; }
+      var html = '';
+      allIdees.forEach(function(idee) {
+        var date = new Date(idee.date); var dateStr = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+        html += '<div class="idee-card"><div class="idee-titre">' + escapeHtml(idee.titre) + '</div>';
+        if (idee.description) { html += '<div class="idee-description">' + escapeHtml(idee.description) + '</div>'; }
+        html += '<div class="idee-meta"><span>Par ' + escapeHtml(idee.nom.split(' ')[0]) + ' • ' + dateStr;
+        if (idee.isAuthor) { html += '<span class="idee-delete" onclick="deleteIdee(\'' + idee.id + '\')">Supprimer</span>'; }
+        html += '</span><div class="idee-actions"><span class="idee-action' + (idee.userLiked ? ' liked' : '') + '" onclick="toggleLike(\'' + idee.id + '\')">' + (idee.userLiked ? '❤️' : '🤍') + ' ' + idee.likes + '</span></div></div></div>';
+      });
+      document.getElementById('ideesList').innerHTML = html;
+    }
+    function showNewIdeeModal() { document.getElementById('modalIdee').classList.remove('hidden'); }
+    function closeIdeeModal() { document.getElementById('modalIdee').classList.add('hidden'); document.getElementById('ideeTitre').value = ''; document.getElementById('ideeDescription').value = ''; }
+    function submitIdee() { var titre = document.getElementById('ideeTitre').value.trim(); var description = document.getElementById('ideeDescription').value.trim(); if (!titre) { alert('Veuillez entrer un titre'); return; } closeIdeeModal(); google.script.run.withSuccessHandler(function(result) { if (result && result.ok) { showModal('✅', 'Merci !', 'Votre idée a été publiée.'); loadIdees(); } else { showModal('❌', 'Erreur', result ? result.msg : 'Erreur'); } }).apiPostIdee(currentToken, titre, description); }
+    function toggleLike(idIdee) { google.script.run.withSuccessHandler(function(result) { if (result && result.ok) { var idee = allIdees.find(function(i) { return i.id === idIdee; }); if (idee) { idee.likes = result.likes; idee.userLiked = result.liked; renderIdees(); } } }).apiLikeIdee(currentToken, idIdee); }
+    function deleteIdee(idIdee) { if (!confirm('Supprimer cette idée ?')) return; google.script.run.withSuccessHandler(function(result) { if (result && result.ok) { loadIdees(); } else { showModal('❌', 'Erreur', result ? result.msg : 'Erreur'); } }).apiDeleteIdee(currentToken, idIdee); }
+
+    // ========== GOODIES ==========
+    function loadGoodies() {
+      showPage('pageGoodies');
+      document.getElementById('goodiesList').innerHTML = '<div class="loading"><div class="spinner"></div><span>Chargement...</span></div>';
+      google.script.run.withSuccessHandler(function(result) { 
+        if (result && result.ok) { 
+          allGoodies = result.data; 
+          google.script.run.withSuccessHandler(function(adminResult) { 
+            if (adminResult && adminResult.ok) { allAdmins = adminResult.data; } 
+            renderGoodies(); 
+          }).apiGetGoodiesAdmins(currentToken); 
+        } else { 
+          document.getElementById('goodiesList').innerHTML = '<div class="historique-empty">Erreur de chargement</div>'; 
+        } 
+      }).apiGetGoodies(currentToken);
+    }
+    function renderGoodies() {
+      if (!allGoodies || allGoodies.length === 0) { document.getElementById('goodiesList').innerHTML = '<div class="historique-empty">Aucun goodie disponible</div>'; return; }
+      var html = '';
+      allGoodies.forEach(function(g) { var icon = getGoodieIcon(g.nom); html += '<div class="goodie-card"><div class="goodie-img">' + icon + '</div><div class="goodie-info"><div class="goodie-name">' + escapeHtml(g.nom) + '</div><div class="goodie-price">' + formatMontant(g.prix) + '</div><div class="goodie-stock">' + g.stock + ' en stock</div></div><button class="btn btn-primary goodie-btn" onclick="commanderGoodie(\'' + g.code + '\', \'' + escapeHtml(g.nom) + '\', ' + g.prix + ')">Commander</button></div>'; });
+      document.getElementById('goodiesList').innerHTML = html;
+    }
+    function getGoodieIcon(nom) { var n = nom.toLowerCase(); if (n.includes('mug') || n.includes('tasse')) return '☕'; if (n.includes('tote') || n.includes('sac')) return '👜'; if (n.includes('sticker')) return '🎨'; if (n.includes('t-shirt') || n.includes('tshirt')) return '👕'; if (n.includes('gourde')) return '🍶'; if (n.includes('casquette')) return '🧢'; if (n.includes('stylo')) return '🖊️'; return '🎁'; }
+    function commanderGoodie(code, nom, prix) { document.getElementById('selectedGoodieCode').value = code; document.getElementById('goodieModalInfo').innerText = nom + ' - ' + formatMontant(prix); var select = document.getElementById('adminSelect'); select.innerHTML = '<option value="">Choisir un responsable...</option>'; allAdmins.forEach(function(admin) { var option = document.createElement('option'); option.value = admin.nom; option.innerText = admin.nom; select.appendChild(option); }); document.getElementById('modalGoodie').classList.remove('hidden'); }
+    function closeGoodieModal() { document.getElementById('modalGoodie').classList.add('hidden'); }
+    function confirmerCommandeGoodie() { 
+      var code = document.getElementById('selectedGoodieCode').value; 
+      var admin = document.getElementById('adminSelect').value; 
+      if (!admin) { alert('Veuillez choisir un responsable'); return; } 
+      closeGoodieModal(); 
+      google.script.run.withSuccessHandler(function(result) { 
+        if (result && result.ok) { 
+          var msg = 'Votre commande a été enregistrée !\n\n📍 Récupération : Contactez ' + admin + '\n💰 Nouveau solde : ' + formatMontant(result.nouveauSolde);
+          showModal('✅', 'Commande confirmée !', msg); 
+          refreshUserData(); 
+          loadGoodies(); 
+        } else { 
+          showModal('❌', 'Erreur', result ? result.msg : 'Erreur'); 
+        } 
+      }).apiCommanderGoodies(currentToken, code, admin); 
+    }
+
+    // ========== BLOCAGE ==========
+    function showBlocage() { document.getElementById('blocageRaison').innerText = currentUser.raisonBlocage || 'Non spécifiée'; if (blocageInterval) clearInterval(blocageInterval); updateBlocageCountdown(); blocageInterval = setInterval(updateBlocageCountdown, 1000); showPage('pageBlocage'); }
+    function updateBlocageCountdown() { if (!currentUser || !currentUser.finBlocage) return; var fin = new Date(currentUser.finBlocage); var now = new Date(); var diff = fin - now; if (diff <= 0) { clearInterval(blocageInterval); blocageInterval = null; refreshUserData(); return; } var hours = Math.floor(diff / (1000 * 60 * 60)); var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)); var seconds = Math.floor((diff % (1000 * 60)) / 1000); document.getElementById('blocageCountdown').innerText = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds); }
+    function pad(n) { return n < 10 ? '0' + n : n; }
+
+    // ========== UTILITIES ==========
+    function showModal(icon, title, message) { document.getElementById('modalIcon').innerText = icon; document.getElementById('modalTitle').innerText = title; document.getElementById('modalMessage').innerText = message; document.getElementById('modalAchat').classList.remove('hidden'); }
+    function closeModal() { document.getElementById('modalAchat').classList.add('hidden'); }
+    function formatMontant(n) { return parseFloat(n || 0).toFixed(2).replace('.', ',') + ' €'; }
+    function formatDate(d) { return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }); }
+    function escapeHtml(text) { var div = document.createElement('div'); div.innerText = text || ''; return div.innerHTML; }
+
+    // ========== INIT ==========
+    window.onload = function() {
+      if (loadSession()) {
+        google.script.run.withSuccessHandler(function(result) {
+          if (result && result.ok) { 
+            currentUser = result.user; 
+            saveSession(); 
+            if (currentUser.bloque) { showBlocage(); } else { loadCompte(); } 
+          }
+          else { clearSession(); showPage('pageLogin'); }
+        }).withFailureHandler(function() { clearSession(); showPage('pageLogin'); }).apiGetUser(currentToken);
+      } else { 
+        showPage('pageLogin'); 
+      }
+    };
+    
+    document.addEventListener('keypress', function(e) { 
+      if (e.key === 'Enter') { 
+        var loginPage = document.getElementById('pageLogin'); 
+        var registerPage = document.getElementById('pageRegister'); 
+        if (loginPage.classList.contains('active')) { doLogin(); } 
+        else if (registerPage.classList.contains('active')) { doRegister(); } 
+      } 
+    });
+  </script>
+</body>
+</html>
